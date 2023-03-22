@@ -1,6 +1,3 @@
-import binascii
-
-import Crypto
 import Crypto.Random
 from time import time
 from urllib.parse import urlparse
