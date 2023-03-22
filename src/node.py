@@ -2,18 +2,14 @@ import block
 import wallet
 import transaction
 
-log = []
-
 class Node:
-	def __init__(self):
+	def __init__(self, ip):
 		self.NBC=100;
-		##set
-
 		#self.chain
 		self.current_id_count = 0
 		self.wallet = self.create_wallet()
 		# self.NBCs 
-		self.ring = {self.wallet.address : [0, -1, self.NBC]} # here we store information for every node, as its id, its address (ip:port) its public key and its balance 
+		self.ring = {self.wallet.address : [0, ip, self.NBC]} # here we store information for every node, as its id, its address (ip:port) its public key and its balance 
 
 	def create_new_block():
 		return
@@ -30,22 +26,25 @@ class Node:
 		return self.ring
 
 	def create_transaction(self, receiver, amount):
-		#remember to broadcast it
-		s = 0
+		s = 0 
+		receiver_address = -1
 		transactionInputs = []
+		for x in self.ring:
+			if self.ring[x][0] == receiver: receiver_address = x
 		for t in self.wallet.utxos:
 			if s >= amount: break
 			if t.address == self.wallet.address: 
 				transactionInputs.append(t)
 				s += t.amount
-		self.broadcast_transaction(transaction.Transaction(self.wallet.public_key, receiver, amount, self.wallet.private_key, transactionInputs))
+		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 
-	def broadcast_transaction(self,T):
-		log.append(T)
+	# def broadcast_transaction(self,T):
+	# 	log.append(T)
 
 	def receive(self, newT):
-		self.validate_transaction(newT)
+		if not self.validate_transaction(newT):
+			return False
 		for x in newT.transaction_inputs:
 			for y in self.wallet.utxos: 
 				if x.transaction_id == y.transaction_id and x.address == y.address and x.amount == y.amount:
@@ -57,24 +56,30 @@ class Node:
 
 		for x in newT.transaction_outputs:
 			self.wallet.utxos.append(x)
+			print("x.address: ", x.address)
+			print("amount: ", self.ring[x.address][2])
 			self.ring[x.address][2] += x.amount
-
-		for x in newT.transaction_inputs:
-			print("Input:\n")
-			x.print_trans()
-		for x in newT.transaction_outputs:
-			print("Output:\n")
-			x.print_trans()
-		for x in self.wallet.utxos:
-			print("Wallet:")
-			x.print_trans()
+		# for x in newT.transaction_inputs:
+		# 	print("Input:\n")
+		# 	x.print_trans()
+		# for x in newT.transaction_outputs:
+		# 	print("Output:\n")
+		# 	x.print_trans()
+		# for x in self.wallet.utxos:
+		# 	print("Wallet:")
+		# 	x.print_trans()
+		return True
 
 	def validate_transaction(self, T):
-		#use of signature and NBCs balance
 		if not T.verify_signature(): 
 			print("Error: Wrong signature!\n")
 			return False
-		# also check for enough balance
+		if T.receiver_address == -1:
+			print("Error: Wrong receiver id!\n")
+			return False
+		if self.ring[T.sender_address][2] < T.amount:
+			print("Error: Not enough NBCs for transaction!\n")
+			return False
 		return True
 
 

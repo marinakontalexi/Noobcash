@@ -33,11 +33,11 @@ class Transaction:
         self.sender_address = sender_address # To public key του wallet από το οποίο προέρχονται τα χρήματα
         self.receiver_address = receiver_address # To public key του wallet στο οποίο θα καταλήξουν τα χρήματα
         self.amount = amount # το ποσό που θα μεταφερθεί
-        self.transaction_id = self.hash() # το hash του transaction
+        transaction_id = self.hash() # το hash του transaction
         self.transaction_inputs = transactionInputs # λίστα από Transaction Input
         change = sum([x.amount for x in transactionInputs]) -  amount
-        self.transaction_outputs = [TransactionIO(self.transaction_id, sender_address, change), 
-                                    TransactionIO(self.transaction_id, receiver_address, amount)] # λίστα από Transaction Output 
+        self.transaction_outputs = [TransactionIO(transaction_id.hexdigest(), sender_address, change), 
+                                    TransactionIO(transaction_id.hexdigest(), receiver_address, amount)] # λίστα από Transaction Output 
         self.signature = self.sign_transaction(sender_private_key)
 
     def to_dict(self):
@@ -53,12 +53,12 @@ class Transaction:
         Sign transaction with private key
         """
         signer = pkcs1_15.new(RSA.import_key(sender_private_key))
-        return signer.sign(self.transaction_id)
+        return signer.sign(self.hash())
     
     def print_trans(self):
-        print("TransactionIO: ", self.transaction_id, ", ", self.sender_address, ", ", self.receiver_address, ", ", self.amount, "\n")
+        print("TransactionIO: ", self.hash(), ", ", self.sender_address, ", ", self.receiver_address, ", ", self.amount, "\n")
     
     def verify_signature(self):
         pk = RSA.import_key(self.sender_address)
         verifier = PKCS1_v1_5.new(pk)
-        return verifier.verify(self.transaction_id, self.signature)
+        return verifier.verify(self.hash(), self.signature)
