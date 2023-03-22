@@ -1,4 +1,3 @@
-import Crypto.Random
 from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
