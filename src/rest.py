@@ -49,7 +49,6 @@ def relogin():
 def register():
     dict = request.get_json()
     pk = dict["public_key"].encode()
-    print(type(pk))
     ip = dict["ip"]
     print(pk, ip)
     if pk in me.ring:
@@ -67,6 +66,8 @@ def register():
 def get_new_node():
     d = request.data
     ring = jsonpickle.decode(d)
+    for x in ring:
+        print(type(ring[x]))
     me.ring = ring.copy()
     return "0"
 
