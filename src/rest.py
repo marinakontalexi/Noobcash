@@ -59,7 +59,7 @@ def register():
     if me.current_id_count == total - 1:
         for x in me.ring:
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring))
-            print("broadcast to: ", me.ring[x][0])      
+            # print("broadcast to: ", me.ring[x][0])      
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
