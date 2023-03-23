@@ -67,7 +67,7 @@ def get_new_node():
     d = request.data
     ring = jsonpickle.decode(d)
     for x in ring:
-        print(type(ring[x]))
+        print(type(ring[x][0]))
     me.ring = ring.copy()
     return "0"
 
