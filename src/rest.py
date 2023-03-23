@@ -66,7 +66,7 @@ def register():
 def get_new_node():
     d = request.data
     ring = jsonpickle.decode(d)
-    me.ring = ring
+    me.ring = ring.copy()
     return "0"
 
 @app.route('/ring/', methods=['GET'])
