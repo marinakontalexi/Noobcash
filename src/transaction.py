@@ -66,6 +66,7 @@ class Transaction:
         """
         Sign transaction with private key
         """
+        print(type(sender_private_key))
         signer = pkcs1_15.new(RSA.import_key(sender_private_key))
         return signer.sign(self.hash())
     
