@@ -37,7 +37,7 @@ def get_transactions():
 
 @app.route('/login/', methods=['GET'])
 def login(): 
-    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.addres,
+    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.address,
                                                                                 "ip" : ip + my_port})
     return "Login Submitted"
 
