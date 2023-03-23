@@ -60,6 +60,7 @@ class Node:
 		if T.receiver_address == -1:
 			print("Error: Wrong receiver id!\n")
 			return False
+		print("sender_address: ", T.sender_address, type(T.sender_address))
 		if self.ring[T.sender_address][2] < T.amount:
 			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
 			print("Error: Not enough NBCs for transaction!\n")
