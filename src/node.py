@@ -48,7 +48,7 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
-		return transaction.Transaction(self.wallet.address, receiver_address, amount, self.wallet.private_key, transactionInputs)
+		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
 		# print("balance_receive: ", self.ring[T.sender_address][2])
