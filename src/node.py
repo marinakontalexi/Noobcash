@@ -30,6 +30,10 @@ class Node:
 			return
 		self.current_id_count += 1
 		self.ring[public_key] = [self.current_id_count, ip, 0]
+		for x in self.ring:
+			print("node:")
+			for y in x:
+				print(y)
 		print("1")
 
 	# transaction functions

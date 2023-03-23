@@ -42,9 +42,11 @@ def get_transactions():
 def login(): 
     requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.public_key.decode(),
                                                                                 "ip" : ip + my_port})
-    if not registered:
-        return "Login FAIL: Public key already registered"
-    return "Login OK"
+    return "Login Submitted"
+
+@app.route('/login/', methods=['POST'])
+def relogin():
+    me.wallet = me.create_wallet()
 
 @app.route('/register/', methods=['POST'])
 def register():
@@ -53,28 +55,26 @@ def register():
     ip = dict["ip"]
     print(pk, ip)
     if pk in me.ring:
-        return "ERROR: Public key already registered"
-    print("-1")
+        print("ERROR: Public key already registered")
+        requests.post("http://" + ip + '/login/')
+        return "1"
     me.register_node_to_ring(pk, ip)
-    print("2")
-    registered = True
     for x in me.ring:
         requests.post("http://" + me.ring[x][1] + '/newnode/', json = {"pk" : pk.decode(),
                                                                             "id" : me.ring[pk][0],
                                                                             "ip" : me.ring[pk][1],
                                                                             "NBC" : me.ring[pk][2]})
+        print("broadcast to: ", me.ring[x][0])      
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
 def get_new_node():
-    print("3")
     dict = request.get_json()
     pk = dict["pk"].encode()
     id = dict["id"]
     ip = dict["ip"]
     NBC = dict["NBC"]
     me.ring[pk] = [id, ip, NBC]
-    print("4")
     return "0"
 
 @app.route('/ring/', methods=['GET'])
