@@ -3,8 +3,9 @@ import wallet
 import transaction
 
 class Node:
+	capacity = 1
 	def __init__(self, ip):
-		self.NBC=100;
+		self.NBC=200;
 		#self.chain
 		self.current_id_count = 0
 		self.wallet = self.create_wallet()
@@ -31,34 +32,19 @@ class Node:
 		transactionInputs = []
 		for x in self.ring:
 			if self.ring[x][0] == receiver: receiver_address = x
-		for t in self.wallet.utxos:
+		for t in self.wallet.utxos[self.wallet.address]:
 			if s >= amount: break
-			if t.address == self.wallet.address: 
-				transactionInputs.append(t)
-				s += t.amount
+			transactionInputs.append(t)
+			s += t.amount
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 
 	# def broadcast_transaction(self,T):
 	# 	log.append(T)
 
-	def receive(self, newT):
-		if not self.validate_transaction(newT):
-			return False
-		for x in newT.transaction_inputs:
-			for y in self.wallet.utxos: 
-				if x.transaction_id == y.transaction_id and x.address == y.address and x.amount == y.amount:
-					self.wallet.utxos.remove(y)
-					if x.address in self.ring: 						# update ring dict
-						self.ring[x.address][2] -= x.amount
-					else: 
-						print("Something went wrong with NBCs dict")
-
-		for x in newT.transaction_outputs:
-			self.wallet.utxos.append(x)
-			print("x.address: ", x.address)
-			print("amount: ", self.ring[x.address][2])
-			self.ring[x.address][2] += x.amount
+	def receive(self, T):
+		print("balance_receive: ", self.ring[T.sender_address][2])
+		return self.validate_transaction(T)
 		# for x in newT.transaction_inputs:
 		# 	print("Input:\n")
 		# 	x.print_trans()
@@ -68,7 +54,6 @@ class Node:
 		# for x in self.wallet.utxos:
 		# 	print("Wallet:")
 		# 	x.print_trans()
-		return True
 
 	def validate_transaction(self, T):
 		if not T.verify_signature(): 
@@ -78,8 +63,51 @@ class Node:
 			print("Error: Wrong receiver id!\n")
 			return False
 		if self.ring[T.sender_address][2] < T.amount:
+			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
 			print("Error: Not enough NBCs for transaction!\n")
 			return False
+		
+		for x in T.transaction_inputs:			# check for valid transaction inputs
+			found = False
+			for t in self.wallet.utxos[T.sender_address]:
+				if x.equal(t):
+					found = True
+					self.wallet.utxos[T.sender_address].remove(t)
+					if x.address in self.ring: 						# update ring dict
+						self.ring[x.address][2] -= x.amount
+					else: 
+						print("Something went wrong with NBCs dict")
+					break
+			if not found: 
+				print("Error: Wrong Transaction Inputs!\n")
+				return False
+			
+		change = sum([x.amount for x in T.transaction_inputs]) -  T.amount
+		if change > 0:
+			correct_outputs = [transaction.TransactionIO(T.hash().digest(), T.sender_address, change),
+		     transaction.TransactionIO(T.hash().digest(), T.receiver_address, T.amount)]
+		else:
+			correct_outputs = [transaction.TransactionIO(T.hash().digest(), T.receiver_address, T.amount)]
+
+		# print("given outputs:")
+		# for x in T.transaction_outputs:
+		# 	x.print_trans()
+		# print("correct outputs:")
+		# output1.print_trans()
+		# output2.print_trans()
+		if (len(T.transaction_outputs) != len(correct_outputs)):
+			print("Error: Invalid Transaction Outputs!\n")
+			return False
+		for i in range(len(correct_outputs)):
+			if not T.transaction_outputs[i].equal(correct_outputs[i]):     # check for valid transaction outputs
+				print("Error: Wrong Transaction Outputs!\n")
+				return False
+		
+		for x in T.transaction_outputs:
+			self.wallet.utxos[T.receiver_address].append(x)
+			self.ring[x.address][2] += x.amount
+			print("x.address: ", self.ring[x.address][0])
+			print("amount: ", self.ring[x.address][2])
 		return True
 
 

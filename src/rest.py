@@ -10,7 +10,7 @@ import transaction
 import wallet
 import jsonpickle
 
-master_node = '192.168.68.106'
+master_node = '192.168.1.5'
 master_port = ":5000"
 my_port = ":5000"
 registered = False
@@ -108,5 +108,5 @@ if __name__ == '__main__':
     port = args.port
 
     me = node.Node(ip + my_port)
-    me.wallet.utxos.append(transaction.TransactionIO(0, me.wallet.public_key, NBCs)) # initial transaction
+    me.wallet.utxos[me.wallet.public_key] = [transaction.TransactionIO(0, me.wallet.public_key, NBCs)] # initial transaction
     app.run(host=ip, port=port)

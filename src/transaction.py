@@ -19,9 +19,22 @@ class TransactionIO:
         self.transaction_id = transaction_id
         self.address = address
         self.amount = amount
+        # self.id = self.hash().hexdigest()
     
     def print_trans(self):
         print("TransactionIO: ", self.transaction_id, ", ", self.address, ", ", self.amount, "\n")
+    
+    def equal(self, T):
+        # print("t_id: ", self.transaction_id == T.transaction_id)
+        # print("address: ", self.address == T.address)
+        # print("amount: ", self.amount == T.amount)
+        # print("hash: ", self.hash().digest() == self.hash().digest())
+        return self.hash().digest() == self.hash().digest()
+    
+    def hash(self):
+        #calculate self.hash
+        block_to_byte = bytes(str(self.transaction_id) + str(self.address) + str(self.amount), 'utf-8')
+        return SHA256.new(block_to_byte)
         
 
 class Transaction:
@@ -34,8 +47,11 @@ class Transaction:
         transaction_id = self.hash() # το hash του transaction
         self.transaction_inputs = transactionInputs # λίστα από Transaction Input
         change = sum([x.amount for x in transactionInputs]) -  amount
-        self.transaction_outputs = [TransactionIO(transaction_id.hexdigest(), sender_address, change), 
-                                    TransactionIO(transaction_id.hexdigest(), receiver_address, amount)] # λίστα από Transaction Output 
+        if change > 0:
+            self.transaction_outputs = [TransactionIO(transaction_id.digest(), sender_address, change), 
+                                        TransactionIO(transaction_id.digest(), receiver_address, amount)] # λίστα από Transaction Output 
+        else:
+            self.transaction_outputs = [TransactionIO(transaction_id.digest(), receiver_address, amount)]
         self.signature = self.sign_transaction(sender_private_key)
 
     def to_dict(self):
@@ -54,7 +70,7 @@ class Transaction:
         return signer.sign(self.hash())
     
     def print_trans(self):
-        print("TransactionIO: ", self.hash(), ", ", self.sender_address, ", ", self.receiver_address, ", ", self.amount, "\n")
+        print("Transaction: ", self.hash().hexdigest, ", ", self.sender_address, ", ", self.receiver_address, ", ", self.amount, "\n")
     
     def verify_signature(self):
         pk = RSA.import_key(self.sender_address)
