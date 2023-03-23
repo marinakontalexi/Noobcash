@@ -24,17 +24,15 @@ class Node:
 		return wallet.Wallet()
 
 	def register_node_to_ring(self, public_key, ip):
-		print("0")
 		if self.ring[self.wallet.address][0] != 0:
 			print("Sorry you cannot register a node!\n")
 			return
 		self.current_id_count += 1
 		self.ring[public_key] = [self.current_id_count, ip, 0]
 		for x in self.ring:
-			print("node:")
-			for y in x:
+			print()
+			for y in self.ring[x]:
 				print(y)
-		print("1")
 
 	# transaction functions
 

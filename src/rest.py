@@ -9,26 +9,23 @@ import node
 import transaction
 import wallet
 import netifaces as ni
+import jsonpickle
 
 master_node = '192.168.2.1'
 master_port = ":5000"
 my_port = ":5000"
-registered = False
+total = 2
 
 ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
 NBCs = 200
 
 app = Flask(__name__)
-# CORS(app)
 # blockchain = Blockchain()
 
 
 #.......................................................................................
 
-
-
-# get all transactions in the blockchain
 
 @app.route('/', methods=['GET'])
 def get_transactions():
@@ -59,22 +56,17 @@ def register():
         requests.post("http://" + ip + '/login/')
         return "1"
     me.register_node_to_ring(pk, ip)
-    for x in me.ring:
-        requests.post("http://" + me.ring[x][1] + '/newnode/', json = {"pk" : pk.decode(),
-                                                                            "id" : me.ring[pk][0],
-                                                                            "ip" : me.ring[pk][1],
-                                                                            "NBC" : me.ring[pk][2]})
-        print("broadcast to: ", me.ring[x][0])      
+    if me.current_id_count == total - 1:
+        for x in me.ring:
+            requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring))
+            print("broadcast to: ", me.ring[x][0])      
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
 def get_new_node():
-    dict = request.get_json()
-    pk = dict["pk"].encode()
-    id = dict["id"]
-    ip = dict["ip"]
-    NBC = dict["NBC"]
-    me.ring[pk] = [id, ip, NBC]
+    d = request.data
+    ring = jsonpickle.decode(d)
+    me.ring = ring
     return "0"
 
 @app.route('/ring/', methods=['GET'])
