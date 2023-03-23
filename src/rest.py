@@ -58,6 +58,7 @@ def register():
     me.register_node_to_ring(pk, ip)
     if me.current_id_count == total - 1:
         for x in me.ring:
+            if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring))      
     return "0"
 
