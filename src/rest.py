@@ -8,13 +8,15 @@ import node
 # import blockchain
 import transaction
 import wallet
-import jsonpickle
+import netifaces as ni
 
 master_node = '192.168.1.5'
 master_port = ":5000"
 my_port = ":5000"
 registered = False
-ip = socket.gethostbyname(socket.gethostname())
+
+ip = ni.ifaddresses("")[ni.AF_INET][0]['addr']
+# ip = socket.gethostbyname(socket.gethostname())
 NBCs = 200
 
 app = Flask(__name__)

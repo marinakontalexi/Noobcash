@@ -1,21 +1,18 @@
-# import blockchain
+import blockchain
+from Crypto.Hash import SHA256
 
+capacity = 1
 
-
-
-# class Block:
-# 	def __init__(self):
-# 		##set
-
-# 		#self.previousHash
-# 		#self.timestamp
-# 		#self.hash
-# 		#self.nonce
-# 		#self.listOfTransactions
+class Block:
+    def __init__(self, previousHash):
+        self.previousHash = previousHash
+        self.listOfTransactions = []
+		#self.hash
+		#self.nonce
+        
+    def hash(self):
+        block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(self.amount), 'utf-8')	    
+        return SHA256.new(block_to_byte)
 	
-# 	def myHash:
-# 		#calculate self.hash
-
-
-# 	def add_transaction(transaction transaction, blockchain blockchain):
-# 		#add a transaction to the block
+    def add_transaction(self, T):
+        self.listOfTransactions.append(T)

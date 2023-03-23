@@ -3,16 +3,18 @@ import wallet
 import transaction
 
 class Node:
-	capacity = 1
+	
+
 	def __init__(self, ip):
-		self.NBC=200;
-		#self.chain
+		self.NBC=200
 		self.current_id_count = 0
 		self.wallet = self.create_wallet()
 		# self.NBCs 
 		self.ring = {self.wallet.address : [0, ip, self.NBC]} # here we store information for every node, as its id, its address (ip:port) its public key and its balance 
+		self.currentBlock = None
+		self.chain = None
 
-	def create_new_block():
+	def create_new_block(self):
 		return
 
 	def create_wallet(self):
@@ -21,6 +23,9 @@ class Node:
 	def register_node_to_ring(self, public_key, ip):
 		#add this node to the ring, only the bootstrap node can add a node to the ring after checking his wallet and ip:port address
 		#bottstrap node informs all other nodes and gives the request node an id and 100 NBCs
+		if self.ring[self.wallet.address][0] != 0:
+			print("Sorry you cannot register a node!\n")
+			return {}
 		self.current_id_count += 1
 		self.ring[self.wallet.address][2] += 100
 		self.ring[public_key] = [self.current_id_count, ip, 0]		
@@ -38,22 +43,10 @@ class Node:
 			s += t.amount
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
-
-	# def broadcast_transaction(self,T):
-	# 	log.append(T)
-
 	def receive(self, T):
 		print("balance_receive: ", self.ring[T.sender_address][2])
-		return self.validate_transaction(T)
-		# for x in newT.transaction_inputs:
-		# 	print("Input:\n")
-		# 	x.print_trans()
-		# for x in newT.transaction_outputs:
-		# 	print("Output:\n")
-		# 	x.print_trans()
-		# for x in self.wallet.utxos:
-		# 	print("Wallet:")
-		# 	x.print_trans()
+		if self.validate_transaction(T):
+			self.add_transaction_to_block(T)
 
 	def validate_transaction(self, T):
 		if not T.verify_signature(): 
@@ -111,27 +104,30 @@ class Node:
 		return True
 
 
+	def add_transaction_to_block(self, T):
+		self.currentBlock.add_transaction(T)
+		if len(self.currentBlock.listOfTransactions) == block.capacity:
+			self.mine_block()
+			return True
+		return False
 
-	# def add_transaction_to_block():
-	# 	#if enough transactions  mine
+	def get_initial_blockchain(self, chain):
+		self.chain = chain
 
+	def mine_block(self):
+		return
 
-
-	# def mine_block():
-
-
-
-	# def broadcast_block():
-
-
-		
+	def broadcast_block(self):
+		self.chain.add_block(self.currentBlock)
+		res = self.currentBlock
+		setattr(res, 'timestamp', time.get)
+		self.create_new_block()
+		return res
 
 	# def valid_proof(.., difficulty=MINING_DIFFICULTY):
 
 
-
-
-	# #concencus functions
+	#concencus functions
 
 	# def valid_chain(self, chain):
 	# 	#check for the longer chain accroose all nodes
@@ -139,6 +135,3 @@ class Node:
 
 	# def resolve_conflicts(self):
 	# 	#resolve correct chain
-
-
-
