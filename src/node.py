@@ -41,7 +41,9 @@ class Node:
 		receiver_address = -1
 		transactionInputs = []
 		for x in self.ring:
-			if self.ring[x][0] == receiver: receiver_address = x
+			if self.ring[x][0] == receiver: 
+				receiver_address = x
+				break
 		for t in self.wallet.utxos[self.wallet.address]:
 			if s >= amount: break
 			transactionInputs.append(t)
@@ -60,6 +62,10 @@ class Node:
 		if T.receiver_address == -1:
 			print("Error: Wrong receiver id!\n")
 			return False
+		if T.sender_address in self.ring: print("valid key")
+		for x in self.ring:
+			print(x)
+			print(x == T.sender_address)
 		print("sender_address: ", T.sender_address, type(T.sender_address))
 		if self.ring[T.sender_address][2] < T.amount:
 			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
