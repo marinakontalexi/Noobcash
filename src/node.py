@@ -23,12 +23,12 @@ class Node:
 	def create_wallet(self):
 		return wallet.Wallet()
 
-	def register_node_to_ring(self, public_key, ip):
+	def register_node_to_ring(self, address, ip):
 		if self.ring[self.wallet.address][0] != 0:
 			print("Sorry you cannot register a node!\n")
 			return
 		self.current_id_count += 1
-		self.ring[public_key] = [self.current_id_count, ip, 0]
+		self.ring[address] = [self.current_id_count, ip, 0]
 		for x in self.ring:
 			print("node:", x)
 			for y in self.ring[x]:
@@ -48,7 +48,7 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
-		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
+		return transaction.Transaction(self.wallet.address, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
 		# print("balance_receive: ", self.ring[T.sender_address][2])

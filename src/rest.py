@@ -37,7 +37,7 @@ def get_transactions():
 
 @app.route('/login/', methods=['GET'])
 def login(): 
-    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.public_key,
+    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.addres,
                                                                                 "ip" : ip + my_port})
     return "Login Submitted"
 
@@ -110,5 +110,5 @@ if __name__ == '__main__':
     port = args.port
 
     me = node.Node(ip + my_port)
-    me.wallet.utxos[me.wallet.public_key] = [transaction.TransactionIO(0, me.wallet.public_key, NBCs)] # initial transaction
+    me.wallet.utxos[me.wallet.address] = [transaction.TransactionIO(0, me.wallet.public_key, NBCs)] # initial transaction
     app.run(host=ip, port=port)
