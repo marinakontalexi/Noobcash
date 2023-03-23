@@ -58,7 +58,8 @@ def register():
     me.register_node_to_ring(pk, ip)
     if me.current_id_count == total - 1:
         for x in me.ring:
-            if x not in me.ring: print("wtf")
+            if x not in me.ring: print(type(x))
+            print(x)
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring))
             # print("broadcast to: ", me.ring[x][0])      
     return "0"
