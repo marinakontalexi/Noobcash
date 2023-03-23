@@ -1,9 +1,10 @@
+import blockchain
 import block
 import wallet
 import transaction
+from datetime import datetime
 
 class Node:
-	
 
 	def __init__(self, ip):
 		self.NBC=200
@@ -14,6 +15,8 @@ class Node:
 		self.currentBlock = None
 		self.chain = None
 
+	# node functions
+
 	def create_new_block(self):
 		return
 
@@ -21,8 +24,6 @@ class Node:
 		return wallet.Wallet()
 
 	def register_node_to_ring(self, public_key, ip):
-		#add this node to the ring, only the bootstrap node can add a node to the ring after checking his wallet and ip:port address
-		#bottstrap node informs all other nodes and gives the request node an id and 100 NBCs
 		if self.ring[self.wallet.address][0] != 0:
 			print("Sorry you cannot register a node!\n")
 			return {}
@@ -30,6 +31,8 @@ class Node:
 		self.ring[self.wallet.address][2] += 100
 		self.ring[public_key] = [self.current_id_count, ip, 0]		
 		return self.ring
+
+	# transaction functions
 
 	def create_transaction(self, receiver, amount):
 		s = 0 
@@ -103,6 +106,7 @@ class Node:
 			print("amount: ", self.ring[x.address][2])
 		return True
 
+	# blockchain functions
 
 	def add_transaction_to_block(self, T):
 		self.currentBlock.add_transaction(T)
@@ -115,16 +119,20 @@ class Node:
 		self.chain = chain
 
 	def mine_block(self):
+		nonce = self.valid_proof()
+		setattr(self.currentBlock, 'nonce', nonce)
 		return
 
 	def broadcast_block(self):
 		self.chain.add_block(self.currentBlock)
 		res = self.currentBlock
-		setattr(res, 'timestamp', time.get)
+		setattr(res, 'timestamp', datetime.now())
+		print(res.timestamp)
 		self.create_new_block()
 		return res
 
-	# def valid_proof(.., difficulty=MINING_DIFFICULTY):
+	def valid_proof(slef, difficulty = blockchain.MINING_DIFFICULTY):
+		return 0
 
 
 	#concencus functions

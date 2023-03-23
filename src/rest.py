@@ -60,7 +60,7 @@ def register():
                                                                             "id" : me.ring[pk][0],
                                                                             "ip" : me.ring[pk][1],
                                                                             "NBC" : me.ring[pk][2]})
-    return "1"
+    return "0"
 
 @app.route('/newnode/', methods=['POST'])
 def get_new_node():
@@ -70,6 +70,7 @@ def get_new_node():
     ip = dict["ip"]
     NBC = dict["NBC"]
     me.ring[pk] = [id, ip, NBC]
+    return "0"
 
 @app.route('/ring/', methods=['GET'])
 def show_ring():
