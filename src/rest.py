@@ -40,7 +40,6 @@ def get_transactions():
 
 @app.route('/login/', methods=['GET'])
 def login(): 
-    print("-1")
     requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.public_key.decode(),
                                                                                 "ip" : ip + my_port})
     if not registered:
@@ -52,8 +51,10 @@ def register():
     dict = request.get_json()
     pk = dict["public_key"].encode()
     ip = dict["ip"]
+    print(pk, ip)
     if pk in me.ring:
         return "ERROR: Public key already registered"
+    print("-1")
     me.register_node_to_ring(pk, ip)
     print("2")
     registered = True
