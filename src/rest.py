@@ -37,7 +37,7 @@ def get_transactions():
 
 @app.route('/login/', methods=['GET'])
 def login(): 
-    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.public_key.decode(),
+    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.public_key,
                                                                                 "ip" : ip + my_port})
     return "Login Submitted"
 
@@ -48,7 +48,7 @@ def relogin():
 @app.route('/register/', methods=['POST'])
 def register():
     dict = request.get_json()
-    pk = dict["public_key"].encode()
+    pk = dict["public_key"]
     ip = dict["ip"]
     print(pk, ip)
     if pk in me.ring:
