@@ -49,6 +49,7 @@ def relogin():
 def register():
     dict = request.get_json()
     pk = dict["public_key"].encode()
+    print(type(pk))
     ip = dict["ip"]
     print(pk, ip)
     if pk in me.ring:
