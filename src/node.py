@@ -48,10 +48,14 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
+		print("CREATE:\n")
+		print(type(self.wallet.public_key), type(receiver_address), type(self.wallet.private_key))
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
 		# print("balance_receive: ", self.ring[T.sender_address][2])
+		print("RECEIVE:\n")
+		print(type(T.sender_address), type(T.receiver_address))
 		if self.validate_transaction(T):
 			self.add_transaction_to_block(T)
 
@@ -63,10 +67,6 @@ class Node:
 			print("Error: Wrong receiver id!\n")
 			return False
 		if T.sender_address in self.ring: print("valid key")
-		for x in self.ring:
-			print("x", x, type(x))
-			print("sender_address: ", T.sender_address, type(T.sender_address))
-			print(x == T.sender_address.decode())
 		
 		if self.ring[T.sender_address.decode()][2] < T.amount:
 			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
