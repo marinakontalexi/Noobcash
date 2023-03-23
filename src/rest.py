@@ -10,7 +10,7 @@ import transaction
 import wallet
 import netifaces as ni
 
-master_node = '192.168.1.5'
+master_node = '192.168.2.1'
 master_port = ":5000"
 my_port = ":5000"
 registered = False
