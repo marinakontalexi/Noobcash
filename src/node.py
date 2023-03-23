@@ -64,7 +64,7 @@ class Node:
 			return False
 		if T.sender_address in self.ring: print("valid key")
 		for x in self.ring:
-			print("x", x)
+			print("x", x, type(x))
 			print("sender_address: ", T.sender_address, type(T.sender_address))
 			print(x == T.sender_address)
 		
