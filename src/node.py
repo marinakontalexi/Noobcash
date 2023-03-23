@@ -30,7 +30,7 @@ class Node:
 		self.current_id_count += 1
 		self.ring[public_key] = [self.current_id_count, ip, 0]
 		for x in self.ring:
-			print()
+			print("node in ring")
 			for y in self.ring[x]:
 				print(y)
 
