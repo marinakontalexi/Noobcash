@@ -66,7 +66,6 @@ class Transaction:
         """
         Sign transaction with private key
         """
-        print(type(sender_private_key))
         signer = pkcs1_15.new(RSA.import_key(sender_private_key))
         return signer.sign(self.hash())
     
@@ -74,6 +73,7 @@ class Transaction:
         print("Transaction: ", self.hash().hexdigest, ", ", self.sender_address, ", ", self.receiver_address, ", ", self.amount, "\n")
     
     def verify_signature(self):
+        print(type(self.sender_private_key))
         pk = RSA.import_key(self.sender_address)
         verifier = PKCS1_v1_5.new(pk)
         return verifier.verify(self.hash(), self.signature)
