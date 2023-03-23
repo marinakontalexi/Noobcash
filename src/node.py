@@ -26,11 +26,10 @@ class Node:
 	def register_node_to_ring(self, public_key, ip):
 		if self.ring[self.wallet.address][0] != 0:
 			print("Sorry you cannot register a node!\n")
-			return {}
+			return
 		self.current_id_count += 1
-		self.ring[self.wallet.address][2] += 100
-		self.ring[public_key] = [self.current_id_count, ip, 0]		
-		return self.ring
+		self.ring[public_key] = [self.current_id_count, ip, 0]
+		print("1")
 
 	# transaction functions
 

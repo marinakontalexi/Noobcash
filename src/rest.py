@@ -54,6 +54,7 @@ def register():
     if pk in me.ring:
         return "ERROR: Public key already registered"
     me.register_node_to_ring(pk, ip)
+    print("2")
     registered = True
     for x in me.ring:
         requests.post("http://" + me.ring[x][1] + '/newnode/', json = {"pk" : pk.decode(),
@@ -64,12 +65,14 @@ def register():
 
 @app.route('/newnode/', methods=['POST'])
 def get_new_node():
+    print("3")
     dict = request.get_json()
     pk = dict["pk"].encode()
     id = dict["id"]
     ip = dict["ip"]
     NBC = dict["NBC"]
     me.ring[pk] = [id, ip, NBC]
+    print("4")
     return "0"
 
 @app.route('/ring/', methods=['GET'])
