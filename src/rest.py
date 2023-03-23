@@ -15,7 +15,7 @@ master_port = ":5000"
 my_port = ":5000"
 registered = False
 
-ip = ni.ifaddresses("")[ni.AF_INET][0]['addr']
+ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
 NBCs = 200
 
