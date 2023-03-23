@@ -24,6 +24,7 @@ class Node:
 		return wallet.Wallet()
 
 	def register_node_to_ring(self, public_key, ip):
+		print("0")
 		if self.ring[self.wallet.address][0] != 0:
 			print("Sorry you cannot register a node!\n")
 			return

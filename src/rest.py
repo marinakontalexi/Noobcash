@@ -40,6 +40,7 @@ def get_transactions():
 
 @app.route('/login/', methods=['GET'])
 def login(): 
+    print("-1")
     requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.public_key.decode(),
                                                                                 "ip" : ip + my_port})
     if not registered:
