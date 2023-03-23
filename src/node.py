@@ -66,7 +66,7 @@ class Node:
 		for x in self.ring:
 			print("x", x, type(x))
 			print("sender_address: ", T.sender_address, type(T.sender_address))
-			print(x == T.sender_address)
+			print(x == T.sender_address.decode.decode())
 		
 		if self.ring[T.sender_address.decode()][2] < T.amount:
 			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
