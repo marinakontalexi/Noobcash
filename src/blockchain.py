@@ -19,7 +19,7 @@ class Blockchain:
         setattr(b, 'listOfBlocks', self.listOfBlocks.copy())
         setattr(b, 'length', self.length)
         setattr(b, 'lasthash', self.lasthash)
-        setattr(b, 'utxos', self.utxos)
+        setattr(b, 'init_utxos', self.init_utxos)
         return b
 
     def print(self):
