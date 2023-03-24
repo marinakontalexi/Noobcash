@@ -106,7 +106,9 @@ def make_transaction():
     amount = int(args.get('amount'))
     t = me.create_transaction(receiver, amount)
     for x in me.ring:
+        if x == me.wallet.address: continue
         requests.post("http://" + me.ring[x][1] + '/broadcast/', data = jsonpickle.encode(t))
+    requests.post("http://" + me.ring[me.wallet.address][1] + '/broadcast/', data = jsonpickle.encode(t))
     return "0"
 
 @app.route('/broadcast/', methods=['POST'])
