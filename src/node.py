@@ -71,7 +71,7 @@ class Node:
 			for t in self.wallet.utxos[str(T.sender_address)]:
 				if x.equal(t):
 					found = True
-					wallet.utxos[str(T.sender_address)].remove(t)
+					self.wallet.utxos[str(T.sender_address)].remove(t)
 					if x.address in self.ring: 						# update ring dict
 						self.ring[x.address][2] -= x.amount
 					else: 
