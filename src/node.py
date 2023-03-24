@@ -46,7 +46,7 @@ class Node:
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 		
 	def receive(self, T):
-		if self.validate_transaction(T, True):
+		if self.validate_transaction(T):
 			print("Transaction is valid\n")
 			return self.add_transaction_to_block(T)
 		print("Error: Transaction not valid\n")	
