@@ -111,6 +111,7 @@ def make_transaction():
 
 @app.route('/broadcast/', methods=['POST'])
 def get_transaction():
+    print("TRANSACTION RECEIVED\n")
     d = request.data
     t = jsonpickle.decode(d)
     b = me.receive(t) 
@@ -134,6 +135,7 @@ def print_blockchain():
 
 @app.route('/newblock/', methods=['POST'])
 def get_block():
+    print("BLOCK RECEIVED\n")
     d = request.data
     b = jsonpickle.decode(d)  
     if not me.receive_block(b):    # diakladwsi
