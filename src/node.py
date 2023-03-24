@@ -116,10 +116,10 @@ class Node:
 		return False
 
 	def get_initial_blockchain(self, chain, utxos):
-		safecurrent = self.currentBlock.copy()
+		# safecurrent = self.currentBlock.copy()
 		if not self.validate_chain(chain):
 			print("ERROR: Invalid chain!")
-			self.currentBlock = safecurrent
+			# self.currentBlock = safecurrent
 			return
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
