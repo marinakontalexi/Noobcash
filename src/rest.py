@@ -142,6 +142,7 @@ def get_transaction():
         return "0"
     else:
         p = threading.Thread(target = mine_function, args=(1,))
+        p.start()
         return "block ok"
             
 
