@@ -80,7 +80,7 @@ def register():
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring)) 
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = (jsonpickle.encode(chain), jsonpickle.encode(me.wallet.utxos)))   
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))   
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
