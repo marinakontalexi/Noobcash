@@ -27,7 +27,9 @@ class Node:
 			return
 		self.current_id_count += 1
 		self.ring[address] = [self.current_id_count, ip, 0]
+		self.chain_ring[address] = [self.current_id_count, ip, 0]
 		self.wallet.utxos[address] = []
+		self.wallet.chain_utxos[address] = []
 
 	# transaction functions
 
@@ -66,7 +68,7 @@ class Node:
 		
 		for x in T.transaction_inputs:			# check for valid transaction inputs
 			found = False
-			for t in wallet.utxos[str(T.sender_address)]:
+			for t in self.wallet.utxos[str(T.sender_address)]:
 				if x.equal(t):
 					found = True
 					wallet.utxos[str(T.sender_address)].remove(t)
@@ -95,7 +97,7 @@ class Node:
 				return False
 		
 		for x in T.transaction_outputs:
-			wallet.utxos[x.address].append(x)
+			self.wallet.utxos[x.address].append(x)
 			self.ring[x.address][2] += x.amount
 		return True
 
