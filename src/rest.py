@@ -100,6 +100,7 @@ def register():
             me.wallet.utxos[x.address].append(x)
         me.currentBlock = block.Block(chain.lasthash)
         me.chain = chain.copy()
+        me.chain.utxos = me.wallet.utxos.copy()
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, chain, me.wallet.utxos)))
@@ -168,6 +169,8 @@ def get_block():
         for x in me.ring:
             if x == me.wallet.address: continue
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
+    else:
+        event.clear()
     return "0"
 
 @app.route('/send_chain/', methods=['POST'])

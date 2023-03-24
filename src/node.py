@@ -45,13 +45,18 @@ class Node:
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 		
 	def receive(self, T):
-		if self.validate_transaction(T):
+		if self.validate_transaction(T, True):
 			print("Transaction is valid\n")
 			return self.add_transaction_to_block(T)
 		print("Error: Transaction not valid\n")	
 		return False
 
-	def validate_transaction(self, T):
+	def validate_transaction(self, T, u):
+		if u:
+			utxos = self.wallet.utxos
+		else: 
+			utxos = self.chain.utxos
+
 		if not T.verify_signature(): 
 			print("Error: Wrong signature!\n")
 			return False
@@ -60,21 +65,19 @@ class Node:
 			return False
 		
 		if self.ring[str(T.sender_address)][2] < T.amount:
-			print("sender's ", self.ring[str(T.sender_address)][0], "coins: ", self.ring[str(T.sender_address)][2])
-			print("amount: ", T.amount)
 			print("Error: Not enough NBCs for transaction!\n")
 			return False
 		
 		for x in T.transaction_inputs:			# check for valid transaction inputs
 			found = False
-			for t in self.wallet.utxos[str(T.sender_address)]:
+			for t in utxos[str(T.sender_address)]:
 				if x.equal(t):
 					found = True
-					self.wallet.utxos[str(T.sender_address)].remove(t)
+					utxos[str(T.sender_address)].remove(t)
 					if x.address in self.ring: 						# update ring dict
 						self.ring[x.address][2] -= x.amount
 					else: 
-						print("Something went wrong with NBCs dict")
+						print("Something went wrong with ring")
 					break
 			if not found: 
 				print("Error: Wrong Transaction Inputs!\n")
@@ -96,7 +99,7 @@ class Node:
 				return False
 		
 		for x in T.transaction_outputs:
-			self.wallet.utxos[x.address].append(x)
+			utxos[x.address].append(x)
 			self.ring[x.address][2] += x.amount
 		return True
 
@@ -113,7 +116,7 @@ class Node:
 		return False
 
 	def get_initial_blockchain(self, chain, utxos):
-		safecurrent = self.currentBlock
+		safecurrent = self.currentBlock.copy()
 		if not self.validate_chain(chain):
 			print("ERROR: Invalid chain!")
 			self.currentBlock = safecurrent
@@ -121,6 +124,7 @@ class Node:
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
 		self.wallet.utxos = utxos.copy()
+		self.chain.utxos = utxos.copy()
 		return
 
 	def mine_block(self):
@@ -148,31 +152,31 @@ class Node:
 		return False
 	
 	def validate_block(self, B):
-		self.chain.print()
-		print(self.chain.lasthash)
-		B.print()
+		safeutxos = self.chain.utxos.copy()
 		if self.chain.lasthash != B.previousHash:
-			print("Error: Wrong Previous Hash!\n")
+			print("Error: Block has wrong previous hash!\n")
 			return False
 		if B.myhash != B.hash():
-			print("Error: Wrong Hash!\n")
+			print("Error: Block has wrong hash!\n")
 			return False
-		return True
-
-	#concencus functions
-
-	def validate_chain(self, chain):
-		self.currentBlock = chain.listOfBlocks[0].copy()
-		for i in range(1, len(chain.listOfBlocks)):
-			if self.validate_block(chain.listOfBlocks[i]):
-				self.currentBlock = chain.listOfBlocks[i].copy()
-			else: 
+		for i in range(len(B.listOfTransactions)):
+			t = B.listOfTransaction[i]
+			if not self.validate_transaction(t):
+				print("Error: Transaction ", i, " was invalid!\n")
+				self.chain.utxos = safeutxos
 				return False
+		return True
+	
+	def validate_chain(self, chain):
+		# for b in chain.listOfBlocks:
 		return True
 
 	def choose_chain(self, chain, utxos):
 		if chain.length > self.chain.length:
-			self.get_initial_blockchain(chain, utxos)
+			self.chain = chain.copy()
+			self.currentBlock = block.Block(chain.lasthash)
+			self.wallet.utxos = utxos.copy()
+			self.chain.utxos = utxos.copy()
 		return
 		
 

@@ -7,6 +7,7 @@ class Blockchain:
         self.listOfBlocks = []
         self.length = 0
         self.lasthash = -1
+        self.utxos = []
 
     def add_block(self, B):
         self.listOfBlocks.append(B)
@@ -18,6 +19,7 @@ class Blockchain:
         setattr(b, 'listOfBlocks', self.listOfBlocks.copy())
         setattr(b, 'length', self.length)
         setattr(b, 'lasthash', self.lasthash)
+        setattr(b, 'utxos', self.utxos)
         return b
 
     def print(self):
