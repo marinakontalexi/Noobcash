@@ -67,8 +67,10 @@ def get_genesis():
     me.ring = ring.copy()
     me.chain_ring = ring.copy()
     for x in me.ring:
+        e =  me.ring[x][0]
         me.ring[x][0] = 100
         print(me.ring[x][0] == me.chain_ring[x][0])
+        me.ring[x][0] = e
     me.wallet.utxos = chain.init_utxos.copy()
     me.wallet.chain_utxos = chain.init_utxos.copy()
     me.get_initial_blockchain(chain)
