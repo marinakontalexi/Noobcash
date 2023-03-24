@@ -25,10 +25,6 @@ class TransactionIO:
         print("TransactionIO: ", self.transaction_id, ", ", self.address, ", ", self.amount, "\n")
     
     def equal(self, T):
-        # print("t_id: ", self.transaction_id == T.transaction_id)
-        # print("address: ", self.address == T.address)
-        # print("amount: ", self.amount == T.amount)
-        # print("hash: ", self.hash().digest() == self.hash().digest())
         return self.hash().digest() == self.hash().digest()
     
     def hash(self):

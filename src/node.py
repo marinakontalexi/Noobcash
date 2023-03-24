@@ -131,8 +131,9 @@ class Node:
 		self.currentBlock = block.Block(chain.lasthash)
 		tout = chain.listOfBlocks[0].listOfTransactions[0].transaction_outputs
 		for x in tout:
-			print(type(x))
-			print(x.address)
+			print(type(x.address))
+			for y in self.wallet.utxos:
+				print(type(y))
 			self.wallet.utxos[x.address].append(x)
 		return
 
