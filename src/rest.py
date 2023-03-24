@@ -94,11 +94,9 @@ def register():
         init_B.add_transaction(init_t)
         init_B.myhash = init_B.hash()
         chain.add_block(init_B)
-        me.wallet.utxos[x.address] = []
-        me.wallet.chain_utxos[x.address] = []
         for x in init_t.transaction_outputs:
-            me.wallet.utxos[x.address].append(x)
-            me.wallet.chain_utxos[x.address].append(x)
+            me.wallet.utxos[x.address] = [x]
+            me.wallet.chain_utxos[x.address] = [x]
         me.currentBlock = block.Block(chain.lasthash)
         me.chain = chain.copy()
         me.chain.init_utxos = me.wallet.utxos.copy()
