@@ -97,7 +97,7 @@ def show_ring():
     acc = "id   address \t balance\n"
     for x in me.ring:
         acc = acc + str(me.ring[x][0]) + " " + str(me.ring[x][1]) + " " + str(me.ring[x][2]) + "\n"
-    return acc
+    return jsonpickle.encode(me.ring)
 
 @app.route('/t', methods=['GET'])
 def make_transaction():
