@@ -32,10 +32,12 @@ def mine_function(event):
         if x == me.wallet.address: continue 
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
 
-def cli_function():
-    time.sleep(30)
-    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
+def cli_function(name):
     project_path = "../"
+    time.sleep(5)
+    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
+    time.sleep(30)
+    
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     print(f.readline())
 #.......................................................................................
@@ -213,6 +215,6 @@ if __name__ == '__main__':
 
     me = node.Node(ip + my_port)
 
-    cli = threading.Thread(target = cli_function, args=(event,), daemon=True)
+    cli = threading.Thread(target = cli_function, args=(1,), daemon=True)
     cli.start()
     app.run(host=ip, port=port)
