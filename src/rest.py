@@ -24,8 +24,6 @@ chain = blockchain.Blockchain()
 
 def mine_function(event):
     # logging.info("Thread %s: starting", name)
-    # time.sleep(2)
-    # logging.info("Thread %s: finishing", name)
     while not me.mine_block():
         if event.is_set():
             return
@@ -34,7 +32,12 @@ def mine_function(event):
         if x == me.wallet.address: continue 
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
 
-
+def cli_function():
+    time.sleep(30)
+    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
+    project_path = "../"
+    f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
+    print(f.readline())
 #.......................................................................................
 
 
@@ -209,10 +212,7 @@ if __name__ == '__main__':
     port = args.port
 
     me = node.Node(ip + my_port)
-    app.run(host=ip, port=port)
 
-    requests.get("http://" + ip  + my_port + "/login/")
-    project_path = "../"
-    time.sleep(30)
-    f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
-    print(f.readline())
+    cli = threading.Thread(target = cli_function, args=(event,), daemon=True)
+    cli.start()
+    app.run(host=ip, port=port)
