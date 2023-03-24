@@ -43,6 +43,7 @@ def cli_function(name):
         s = f.readline()
         [r, amount] = s.split()
         rcv = r[2:]
+        if int(rcv) >= total: continue
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         time.sleep(10)
 #.......................................................................................
