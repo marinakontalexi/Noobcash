@@ -12,7 +12,7 @@ import time
 
 master_node = '192.168.1.5'
 master_port = ":5000"
-my_port = ":5000"
+my_port = ":6000"
 total = 2
 project_path = "../"
 
@@ -45,9 +45,9 @@ def mine_function(event):
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
 
 def cli_function(name):
-    time.sleep(10)
+    time.sleep(10)   
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
-    time.sleep(10)    
+    time.sleep(10)       
     queue = threading.Thread(target = queue_function, args=(), daemon=True)
     queue.start()
     time.sleep(20)
@@ -228,7 +228,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=6000, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 

@@ -3,6 +3,8 @@ import block
 import wallet
 import transaction
 from Crypto.Random import random
+import requests
+import rest
 
 class Node:
 
@@ -50,7 +52,7 @@ class Node:
 	def receive(self, T):
 		if self.validate_transaction(T):
 			print("Transaction is valid\n")
-			return self.add_transaction_to_block(T)
+			return True
 		print("Error: Transaction not valid\n")	
 		return False
 
@@ -211,6 +213,8 @@ class Node:
 				print("Error: Transaction ", i, " was invalid!\n")
 				self.wallet.chain_utxos = safeutxos
 				return False
+		self.wallet.utxos = self.wallet.chain_utxos.copy()
+		self.ring = self.chain_ring.copy()
 		return True
 	
 	def validate_chain(self, chain):
@@ -240,6 +244,24 @@ class Node:
 					self.wallet.chain_utxos[x].append(t)
 		return
 		
+	def balance():
+		url = 'http://' + rest.ip + rest.my_port + '/balance/'
+		response = requests.get(url)
+		print('Your balance is :', response.text)
+		return response
+	
+	def view():
+		url = 'http://' + rest.ip + rest.my_port + '/view'
+		response = requests.get(url)
+		re = response.json()
+		print('List of transaction of last block of blockchain')
+		print(re['listOfTransactions'])
 
-	# def resolve_conflicts(self, B):
-	# 	return self.currentBlock.previousHash == B.previousHash
+	def sendTransCli(id, amount):
+		url = 'http://' + rest.ip + rest.my_port + '/t?to='+ str(id) + '&amount=' + str(amount)
+		# print(url)
+		response = requests.get(url)
+		if(response.status_code == 200):
+			print('Transcation is send!')
+		else:
+			print('Transaction was not send please repeat!')
