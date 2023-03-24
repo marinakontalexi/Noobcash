@@ -147,7 +147,7 @@ class Node:
 		
 		for x in T.transaction_outputs:
 			self.wallet.chain_utxos[x.address].append(x)
-			self.self.chain_ring[x.address][2] += x.amount
+			self.chain_ring[x.address][2] += x.amount
 		return True
 
 	def create_new_block(self):
