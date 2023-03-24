@@ -161,7 +161,7 @@ class Node:
 			return False
 		for i in range(len(B.listOfTransactions)):
 			t = B.listOfTransactions[i]
-			if not self.validate_transaction(t):
+			if not self.validate_transaction(t, False):
 				print("Error: Transaction ", i, " was invalid!\n")
 				self.chain.utxos = safeutxos
 				return False
