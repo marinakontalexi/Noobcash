@@ -60,6 +60,8 @@ class Node:
 			self.add_transaction_to_block(T)
 
 	def validate_transaction(self, T):
+		print("VALIDATE:\n")
+		print(type(T.sender_address), type(T.receiver_address))
 		if not T.verify_signature(): 
 			print("Error: Wrong signature!\n")
 			return False
@@ -90,17 +92,11 @@ class Node:
 			
 		change = sum([x.amount for x in T.transaction_inputs]) -  T.amount
 		if change > 0:
-			correct_outputs = [transaction.TransactionIO(T.hash().digest(), T.sender_address, change),
+			correct_outputs = [transaction.TransactionIO(T.hash().digest(), str(T.sender_address), change),
 		     transaction.TransactionIO(T.hash().digest(), T.receiver_address, T.amount)]
 		else:
 			correct_outputs = [transaction.TransactionIO(T.hash().digest(), T.receiver_address, T.amount)]
 
-		# print("given outputs:")
-		# for x in T.transaction_outputs:
-		# 	x.print_trans()
-		# print("correct outputs:")
-		# output1.print_trans()
-		# output2.print_trans()
 		if (len(T.transaction_outputs) != len(correct_outputs)):
 			print("Error: Invalid Transaction Outputs!\n")
 			return False
