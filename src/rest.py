@@ -65,7 +65,7 @@ def get_genesis():
     #     me.wallet.utxos[x] = []
     #     me.wallet.chain_utxos[x] = []
     me.ring = ring.copy()
-    me.chain_ring = ring.copy()
+    me.chain_ring = me.ring.copy()
     me.wallet.utxos = chain.init_utxos.copy()
     me.wallet.chain_utxos = chain.init_utxos.copy()
     me.get_initial_blockchain(chain)
