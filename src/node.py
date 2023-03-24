@@ -136,7 +136,7 @@ class Node:
 		return
 
 	def mine_block(self):
-		while (not self.valid_proof(str(self.currentBlock.hash()), blockchain.MINING_DIFFICULTY)):
+		while (not self.valid_proof(self.currentBlock.hash(), blockchain.MINING_DIFFICULTY)):
 			nonce = random.getrandbits(32)
 			setattr(self.currentBlock, 'nonce', nonce)
 		return self.broadcast_block()
@@ -147,9 +147,8 @@ class Node:
 		self.chain.add_block(self.currentBlock)
 		self.create_new_block()
 		return res
-
+	counter = 1
 	def valid_proof(self, hash, difficulty):
-		print(hash)
 		return hash[0:difficulty] == "0"*difficulty
 
 	def receive_block(self, B):

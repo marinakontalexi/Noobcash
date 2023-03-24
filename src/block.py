@@ -13,8 +13,8 @@ class Block:
         
     def hash(self):
         block_to_byte = bytes(str(self.previousHash) + jsonpickle.encode(self.listOfTransactions) + str(self.nonce), 'utf-8')	    
-        self.myhash = SHA256.new(block_to_byte)
-        return str(self.myhash)
+        self.myhash = SHA256.new(block_to_byte).hexdigest()
+        return self.myhash
 	
     def add_transaction(self, T):
         self.listOfTransactions.append(T)
