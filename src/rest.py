@@ -139,11 +139,11 @@ def get_transaction():
     d = request.data
     t = jsonpickle.decode(d) 
     if me.receive(t):
-        return "0"
-    else:
         p = threading.Thread(target = mine_function, args=(1,))
         p.start()
         return "block ok"
+    else:
+        return "0"
             
 
 @app.route('/balance/', methods=['GET'])
