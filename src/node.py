@@ -104,7 +104,7 @@ class Node:
 	# blockchain functions
 
 	def create_new_block(self):
-		self.currentBlock = block.Block(self.currentBlock.hash)
+		self.currentBlock = block.Block(self.currentBlock.myhash)
 		return
 	
 	def add_transaction_to_block(self, T):
