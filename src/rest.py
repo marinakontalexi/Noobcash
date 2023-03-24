@@ -35,7 +35,7 @@ def mine_function(event):
     print("mine ok")
     for x in me.ring:
         if x == me.wallet.address: continue 
-        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.currentBlock))
+        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
 
 
 #.......................................................................................

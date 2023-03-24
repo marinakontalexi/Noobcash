@@ -6,6 +6,7 @@ class Blockchain:
     def __init__(self):
         self.listOfBlocks = []
         self.length = 0
+        self.lasthash = -1
 
     def add_block(self, B):
         self.listOfBlocks.append(B)
