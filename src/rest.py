@@ -3,9 +3,9 @@ from flask import Flask, jsonify, request, render_template
 import socket  
 import json 
 # from flask_cors import CORS
-# import block
+import block
 import node
-# import blockchain
+import blockchain
 import transaction
 import wallet
 import netifaces as ni
@@ -21,7 +21,7 @@ ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
 NBCs = 200
 
 app = Flask(__name__)
-# blockchain = Blockchain()
+chain = blockchain.Blockchain()
 
 
 #.......................................................................................
@@ -43,12 +43,16 @@ def login():
 
 @app.route('/login/', methods=['POST'])
 def relogin():
-    if request.data == None:
-        me.wallet = me.create_wallet()
-    else:
-        init_utxo = jsonpickle.decode(request.data)
-        addr = init_utxo.address
-        me.wallet.utxos[addr] = [init_utxo]
+    me.wallet = me.create_wallet()
+    requests.post("http://" + master_node + master_port + '/register/', json = {"public_key" : me.wallet.address,
+                                                                                "ip" : ip + my_port})
+    return "Relogin Submitted"
+
+@app.route('/genesis/', methods=['POST'])
+def get_genesis():
+    chain = jsonpickle.decode(request.data)
+    me.get_initial_blockchain(chain)
+
 
 @app.route('/register/', methods=['POST'])
 def register():
@@ -58,16 +62,20 @@ def register():
     print(pk, ip)
     if pk in me.ring:
         print("ERROR: Public key already registered")
-        requests.post("http://" + ip + '/login/', data = None)
+        requests.post("http://" + ip + '/login/')
         return "1"
     me.register_node_to_ring(pk, ip)
-    init_utxo = transaction.TransactionIO(0, me.wallet.address, NBCs)     # initial utxo
-    requests.post("http://" + ip + '/login/', data = jsonpickle.encode(init_utxo))
+
     if me.current_id_count == total - 1:
-        me.wallet.utxos[me.wallet.address] = [init_utxo]
+        init_t = transaction.Transaction(b'0', me.wallet.address, 100*total, b'0', [])
+        init_B = block.Block("1")
+        init_B.add_transaction(init_t)
+        init_B.myhash = init_B.hash()
+        chain.add_block(init_B)
         for x in me.ring:
             if me.ring[x][0] == 0: continue
-            requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring))      
+            requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring)) 
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode(chain))     
     return "0"
 
 @app.route('/newnode/', methods=['POST'])

@@ -1,18 +1,20 @@
 import blockchain
 from Crypto.Hash import SHA256
+import jsonpickle
 
-capacity = 1
+capacity = 3
 
 class Block:
     def __init__(self, previousHash):
         self.previousHash = previousHash
         self.listOfTransactions = []
-		#self.hash
-		#self.nonce
+        self.nonce = 0
+        self.myhash = self.hash()
         
     def hash(self):
-        block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(self.amount), 'utf-8')	    
-        return SHA256.new(block_to_byte)
+        block_to_byte = bytes(str(self.previousHash) + jsonpickle.encode(self.listOfTransactions) + str(self.nonce), 'utf-8')	    
+        self.myhash = SHA256.new(block_to_byte)
+        return str(self.myhash)
 	
     def add_transaction(self, T):
         self.listOfTransactions.append(T)

@@ -3,6 +3,7 @@ import block
 import wallet
 import transaction
 from datetime import datetime
+import Crypto
 
 class Node:
 
@@ -16,9 +17,6 @@ class Node:
 		self.chain = None
 
 	# node functions
-
-	def create_new_block(self):
-		return
 
 	def create_wallet(self):
 		return wallet.Wallet()
@@ -58,7 +56,10 @@ class Node:
 		print("RECEIVE:\n")
 		print(type(T.sender_address), type(T.receiver_address))
 		if self.validate_transaction(T):
-			self.add_transaction_to_block(T)
+			B = self.add_transaction_to_block(T)
+			if B != None:
+				return True
+		return False
 
 	def validate_transaction(self, T):
 		print("VALIDATE:\n")
@@ -115,33 +116,41 @@ class Node:
 
 	# blockchain functions
 
+	def create_new_block(self):
+		self.currentBlock = block.Block(self.currentBlock.hash)
+		return
+	
 	def add_transaction_to_block(self, T):
 		self.currentBlock.add_transaction(T)
 		if len(self.currentBlock.listOfTransactions) == block.capacity:
-			self.mine_block()
-			return True
-		return False
+			return self.mine_block()
+		return None
 
 	def get_initial_blockchain(self, chain):
 		self.chain = chain
+		self.currentBlock = block.Block(chain.lasthash)
+		return
 
 	def mine_block(self):
-		nonce = self.valid_proof()
-		setattr(self.currentBlock, 'nonce', nonce)
-		return
+		while (not self.valid_proof(str(self.currentBlock.hash()))):
+			nonce = Crypto.Random.random.getrandbits(32)
+			setattr(self.currentBlock, 'nonce', nonce)
+		return self.broadcast_block()
 
 	def broadcast_block(self):
 		self.chain.add_block(self.currentBlock)
 		res = self.currentBlock
-		setattr(res, 'timestamp', datetime.now())
-		print(res.timestamp)
+		self.chain.add_block(self.currentBlock)
 		self.create_new_block()
 		return res
 
-	def valid_proof(slef, difficulty = blockchain.MINING_DIFFICULTY):
-		return 0
+	def valid_proof(hash, difficulty = blockchain.MINING_DIFFICULTY):
+		return hash[0:difficulty] == "0"*difficulty
 
-
+	def receive_block(self, B):
+		# checks?
+		self.chain.add_block(B)
+		return
 	#concencus functions
 
 	# def valid_chain(self, chain):
