@@ -143,7 +143,7 @@ def get_transaction():
     d = request.data
     t = jsonpickle.decode(d) 
     if me.receive(t):
-        p = threading.Thread(target = mine_function, args=(event,))
+        p = threading.Thread(target = mine_function, args=(event,), daemon=True)
         p.start()
         return "block ok"
     else:
