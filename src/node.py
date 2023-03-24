@@ -43,8 +43,8 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
-		print("CREATE:\n")
-		print(self.ring[self.wallet.address][0], self.ring[receiver_address][0], receiver)
+		# print("CREATE:\n")
+		# print(self.ring[self.wallet.address][0], self.ring[receiver_address][0], receiver)
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
@@ -105,7 +105,7 @@ class Node:
 				return False
 		
 		for x in T.transaction_outputs:
-			self.wallet.utxos[T.receiver_address].append(x)
+			self.wallet.utxos[x.address].append(x)
 			self.ring[x.address][2] += x.amount
 
 		print("utxos after append: ")
