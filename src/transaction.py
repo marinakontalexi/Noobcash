@@ -57,7 +57,10 @@ class Transaction:
         
     def hash(self):
         #calculate self.hash
-        block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(jsonpickle.encode(self.transaction_inputs)) + str(self.amount), 'utf-8')
+        if self.transaction_inputs == []:
+            block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(self.amount), 'utf-8')
+        else:
+            block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(jsonpickle.encode(self.transaction_inputs)) + str(self.amount), 'utf-8')
         return SHA256.new(block_to_byte)
 
     def sign_transaction(self, sender_private_key):
