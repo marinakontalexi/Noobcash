@@ -39,13 +39,15 @@ def cli_function(name):
     time.sleep(20)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = " "
+    t = time.time()
     while s != "":
         s = f.readline()
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: continue
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        time.sleep(10)
+        # time.sleep(10)
+    print("Time", time.time() - t)
 #.......................................................................................
 
 
