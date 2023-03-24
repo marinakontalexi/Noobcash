@@ -15,6 +15,7 @@ class Wallet:
 		self.public_key = rsaKeys.publickey().export_key()
 		self.address = str(self.public_key)
 		self.utxos = {}
+		self.chain_utxos = {}
 
 	def balance(self):
 		return sum([x.amount for x in self.utxos[self.address]])

@@ -7,7 +7,7 @@ class Blockchain:
         self.listOfBlocks = []
         self.length = 0
         self.lasthash = -1
-        self.utxos = []
+        self.init_utxos = []
 
     def add_block(self, B):
         self.listOfBlocks.append(B)

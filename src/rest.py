@@ -64,11 +64,13 @@ def relogin():
 
 @app.route('/genesis/', methods=['POST'])
 def get_genesis():
-    (ring, chain, utxos) = jsonpickle.decode(request.data)
-    for x in ring:
-        me.wallet.utxos[x] = []
+    (ring, chain) = jsonpickle.decode(request.data)
+    # for x in ring:
+    #     me.wallet.utxos[x] = []
+    #     me.wallet.chain_utxos[x] = []
     me.ring = ring.copy()
-    me.get_initial_blockchain(chain, utxos)
+    me.chain_ring = ring.copy()
+    me.get_initial_blockchain(chain)
     return "0"
 
 @app.route('/register/', methods=['POST'])
@@ -81,11 +83,11 @@ def register():
     ip = dict["ip"]
     if pk in me.ring:
         if me.ring[pk][1] == ip:
-            requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((me.ring, chain, me.wallet.utxos)))
+            requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((me.chain_ring, me.chain)))
         else:
             print("ERROR: Public key already registered")
             requests.post("http://" + ip + '/login/')
-            return "1"
+        return "1"
         
     me.register_node_to_ring(pk, ip)
 
@@ -98,12 +100,14 @@ def register():
         for x in init_t.transaction_outputs:
             me.wallet.utxos[x.address] = []
             me.wallet.utxos[x.address].append(x)
+            me.wallet.chain_utxos[x.address] = []
+            me.wallet.chain_utxos[x.address].append(x)
         me.currentBlock = block.Block(chain.lasthash)
         me.chain = chain.copy()
-        me.chain.utxos = me.wallet.utxos.copy()
+        me.chain.init_utxos = me.wallet.utxos.copy()
         for x in me.ring:
             if me.ring[x][0] == 0: continue
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, chain, me.wallet.utxos)))
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.chain_ring, me.chain, me.chain.init_utxos)))
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             t = me.create_transaction(me.ring[x][0], 100)
@@ -177,14 +181,14 @@ def get_block():
 def send_chain():
     ip = request.data
     requests.post("http://" + ip.decode() + '/resolve/', 
-                    data = jsonpickle.encode((me.chain, me.wallet.utxos)))
+                    data = jsonpickle.encode((me.chain, me.wallet.chain_utxos, me.chain_ring)))
     return "0"
 
 @app.route('/resolve/', methods=['POST'])
 def resolve():
     d = request.data
-    (c, u) = jsonpickle.decode(d)
-    me.choose_chain(c, u)
+    (c, u, r) = jsonpickle.decode(d)
+    me.choose_chain(c, u, r)
     event.clear()
     return "0"
 
