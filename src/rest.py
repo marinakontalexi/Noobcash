@@ -118,6 +118,7 @@ def get_transaction():
         return "0"
     else:
         for x in me.ring:
+            if x == me.wallet.address: continue
             requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(b))
             return "block ok"
 
