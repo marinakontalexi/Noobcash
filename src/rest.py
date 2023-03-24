@@ -1,7 +1,8 @@
 import requests
 from flask import Flask, jsonify, request, render_template
-import socket  
-import json 
+import logging
+import threading
+import time
 # from flask_cors import CORS
 import block
 import node
@@ -18,10 +19,19 @@ total = 2
 
 ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
-NBCs = 200
+p = None
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
+
+def mine_function(name):
+    # logging.info("Thread %s: starting", name)
+    # time.sleep(2)
+    # logging.info("Thread %s: finishing", name)
+    b = me.mine_block()
+    for x in me.ring:
+        if x == me.wallet.address: continue 
+        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(b))
 
 
 #.......................................................................................
@@ -127,15 +137,13 @@ def make_transaction():
 def get_transaction():
     print("TRANSACTION RECEIVED\n")
     d = request.data
-    t = jsonpickle.decode(d)
-    b = me.receive(t) 
-    if b == None:
+    t = jsonpickle.decode(d) 
+    if me.receive(t):
         return "0"
     else:
-        for x in me.ring:
-            if x == me.wallet.address: continue
-            requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(b))
-            return "block ok"
+        p = threading.Thread(target = mine_function, args=(1,))
+        return "block ok"
+            
 
 @app.route('/balance/', methods=['GET'])
 def get_balance():

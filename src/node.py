@@ -42,22 +42,14 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
-		print("CREATE\nInputs:")
-		for x in transactionInputs:
-			x.print_trans()
-		t = transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
-		print("Outputs:")
-		for x in t.transaction_outputs:
-			x.print_trans()
-		return t
-
+		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
+		
 	def receive(self, T):
 		if self.validate_transaction(T):
 			print("Transaction is valid\n")
-			B = self.add_transaction_to_block(T)
-			return B
+			return self.add_transaction_to_block(T)
 		print("Error: Transaction not valid\n")	
-		return None
+		return False
 
 	def validate_transaction(self, T):
 		if not T.verify_signature(): 
@@ -117,8 +109,8 @@ class Node:
 	def add_transaction_to_block(self, T):
 		self.currentBlock.add_transaction(T)
 		if len(self.currentBlock.listOfTransactions) == block.capacity:
-			return self.mine_block()
-		return None
+			return True
+		return False
 
 	def get_initial_blockchain(self, chain, utxos):
 		safecurrent = self.currentBlock
