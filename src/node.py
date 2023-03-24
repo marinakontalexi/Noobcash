@@ -168,6 +168,7 @@ class Node:
 			return
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
+		self.wallet.utxos = self.wallet.chain_utxos.copy()
 		return
 
 	def mine_block(self):
