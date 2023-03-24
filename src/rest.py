@@ -94,10 +94,10 @@ def get_new_node():
 
 @app.route('/ring/', methods=['GET'])
 def show_ring():
-    acc = "id   address \t balance\n"
+    acc = [["id", "address", "balance"]]
     for x in me.ring:
-        acc = acc + str(me.ring[x][0]) + " " + str(me.ring[x][1]) + " " + str(me.ring[x][2]) + "\n"
-    return jsonpickle.encode(me.ring)
+        acc.append([me.ring[x][0], me.ring[x][1], me.ring[x][2]])
+    return jsonpickle.encode(acc)
 
 @app.route('/t', methods=['GET'])
 def make_transaction():
