@@ -2,8 +2,7 @@ import blockchain
 import block
 import wallet
 import transaction
-from datetime import datetime
-import Crypto
+from Crypto.Random import random
 
 class Node:
 
@@ -138,7 +137,7 @@ class Node:
 
 	def mine_block(self):
 		while (not self.valid_proof(str(self.currentBlock.hash()), blockchain.MINING_DIFFICULTY)):
-			nonce = Crypto.Random.random.getrandbits(32)
+			nonce = random.getrandbits(32)
 			setattr(self.currentBlock, 'nonce', nonce)
 		return self.broadcast_block()
 
