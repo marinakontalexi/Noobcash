@@ -28,10 +28,6 @@ class Node:
 		self.current_id_count += 1
 		self.ring[address] = [self.current_id_count, ip, 0]
 		self.wallet.utxos[address] = []
-		for x in self.ring:
-			print("node:", x)
-			for y in self.ring[x]:
-				print(y)
 
 	# transaction functions
 
@@ -47,13 +43,9 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
-		print("CREATE:\n")
-		print(type(self.wallet.public_key), type(receiver_address), type(self.wallet.private_key))
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
-		print("RECEIVE:\n")
-		print(type(T.sender_address), type(T.receiver_address))
 		if self.validate_transaction(T):
 			B = self.add_transaction_to_block(T)
 			if B != None:
@@ -61,8 +53,6 @@ class Node:
 		return False
 
 	def validate_transaction(self, T):
-		print("VALIDATE:\n")
-		print(type(T.sender_address), type(T.receiver_address))
 		if not T.verify_signature(): 
 			print("Error: Wrong signature!\n")
 			return False
@@ -90,6 +80,10 @@ class Node:
 				print("Error: Wrong Transaction Inputs!\n")
 				return False
 			
+		print("utxos after remove: ")
+		for x in self.wallet.utxos:
+			print(x)
+
 		change = sum([x.amount for x in T.transaction_inputs]) -  T.amount
 		if change > 0:
 			correct_outputs = [transaction.TransactionIO(T.hash().digest(), str(T.sender_address), change),
@@ -108,6 +102,11 @@ class Node:
 		for x in T.transaction_outputs:
 			self.wallet.utxos[T.receiver_address].append(x)
 			self.ring[x.address][2] += x.amount
+
+		print("utxos after append: ")
+		for x in self.wallet.utxos:
+			print(x)
+		
 		return True
 
 	# blockchain functions
