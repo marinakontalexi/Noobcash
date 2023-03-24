@@ -149,7 +149,7 @@ class Node:
 			self.wallet.chain_utxos[x.address].append(x)
 			# print(self.chain_ring[x.address][2])
 			self.chain_ring[x.address][2] += x.amount
-			print(self.chain_ring[x.address][2])
+			# print(self.chain_ring[x.address][2])
 		return True
 
 	def create_new_block(self):
