@@ -160,7 +160,7 @@ class Node:
 			print("Error: Block has wrong hash!\n")
 			return False
 		for i in range(len(B.listOfTransactions)):
-			t = B.listOfTransaction[i]
+			t = B.listOfTransactions[i]
 			if not self.validate_transaction(t):
 				print("Error: Transaction ", i, " was invalid!\n")
 				self.chain.utxos = safeutxos
