@@ -166,8 +166,11 @@ class Node:
 			print("ERROR: Invalid chain!")
 			# self.currentBlock = safecurrent
 			return
+		print("\n1\n")
 		self.chain = chain.copy()
+		print("\n2\n")
 		self.currentBlock = block.Block(chain.lasthash)
+		print("\n3\n")
 		# if chain.length == 1:
 		# 	self.wallet.utxos = chain.init_utxos.copy()
 		# 	self.wallet.chain_utxos = chain.init_utxos.copy()
