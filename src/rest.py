@@ -35,14 +35,13 @@ def mine_function(event):
 def cli_function(name):
     project_path = "../"
     time.sleep(5)
-    print("THREAD HERE")
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
-    time.sleep(30)
+    time.sleep(20)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = " "
     while s != "":
         s = f.readline()
-        [r, amount] = s.split
+        [r, amount] = s.split()
         rcv = r[2:]
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         time.sleep(10)
