@@ -149,6 +149,7 @@ class Node:
 	
 	def validate_block(self, B):
 		self.chain.print()
+		print(self.chain.lasthash)
 		B.print()
 		if self.chain.lasthash != B.previousHash:
 			print("Error: Wrong Previous Hash!\n")
