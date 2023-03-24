@@ -38,9 +38,14 @@ def cli_function(name):
     print("THREAD HERE")
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
     time.sleep(30)
-    
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
-    print(f.readline())
+    s = " "
+    while s != "":
+        s = f.readline()
+        [r, amount] = s.split
+        rcv = r[2:]
+        requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
+        time.sleep(10)
 #.......................................................................................
 
 
