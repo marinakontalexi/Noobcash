@@ -156,6 +156,22 @@ class Node:
 	
 	def add_transaction_to_block(self, T):
 		self.currentBlock.add_transaction(T)
+		print("UTXOS:\n")
+		for x in self.wallet.utxos:
+			for y in self.wallet.utxos[x]:
+				y.print_trans()
+
+		print("\nCHAIN UTXOS:\n")
+		for x in self.wallet.chain_utxos:
+			for y in self.wallet.chain_utxos[x]:
+				y.print_trans()
+
+		print("\nRING")
+		for x in self.ring:
+			print(self.ring[x])
+		print("\nCHAIN RING")
+		for x in self.chain_ring:
+			print(self.chain_ring[x])
 		if len(self.currentBlock.listOfTransactions) == block.capacity:
 			return True
 		return False
@@ -184,7 +200,6 @@ class Node:
 		print("\nCHAIN RING")
 		for x in self.chain_ring:
 			print(self.chain_ring[x])
-
 		return
 
 	def mine_block(self):
