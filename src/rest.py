@@ -65,8 +65,8 @@ def get_genesis():
         me.ring[x] = []
         me.chain_ring[x] = []
         for i in range(3):
-            me.ring[x][i] = ring[x][i]
-            me.chain_ring[x][i] = ring[x][i]
+            me.ring[x].append(ring[x][i])
+            me.chain_ring[x].append(ring[x][i])
         me.wallet.utxos[x] = []
         me.wallet.chain_utxos[x] = []
         for t in chain.init_utxos[x]:
