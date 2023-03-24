@@ -149,6 +149,7 @@ class Node:
 		return res
 
 	def valid_proof(self, hash, difficulty):
+		print(hash)
 		return hash[0:difficulty] == "0"*difficulty
 
 	def receive_block(self, B):
