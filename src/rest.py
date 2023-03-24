@@ -146,6 +146,12 @@ def print_blockchain():
     me.chain.print()
     return "Check stdout"
 
+@app.route('/utxos/', methods=['GET'])
+def print_utxos():
+    for x in me.wallet.utxos:
+        for y in me.wallet.utxos[x]:
+            y.print_trans()
+    return "Check stdout"
 
 @app.route('/newblock/', methods=['POST'])
 def get_block():
