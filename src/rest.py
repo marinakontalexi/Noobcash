@@ -75,7 +75,7 @@ def get_new_node():
     d = request.data
     ring = jsonpickle.decode(d)
     for x in ring:
-        print(type(ring[x][0]))
+        if ring[x][0] != 0: me.wallet.utxos[x] = []
     me.ring = ring.copy()
     return "0"
 
