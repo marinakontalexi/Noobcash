@@ -29,6 +29,7 @@ class Node:
 			return
 		self.current_id_count += 1
 		self.ring[address] = [self.current_id_count, ip, 0]
+		self.wallet.utxos[address] = []
 		for x in self.ring:
 			print("node:", x)
 			for y in self.ring[x]:
