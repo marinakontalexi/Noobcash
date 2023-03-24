@@ -143,9 +143,7 @@ def get_block():
 @app.route('/send_chain/', methods=['POST'])
 def send_chain():
     ip = request.data
-    print(ip)
-    print(type(ip))
-    requests.post("http://" + ip + '/resolve/', 
+    requests.post("http://" + str(ip) + '/resolve/', 
                     data = jsonpickle.encode(me.chain))
     return "0"
 
