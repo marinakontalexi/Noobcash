@@ -57,13 +57,20 @@ def get_genesis():
 
 @app.route('/register/', methods=['POST'])
 def register():
-    dict = request.get_json()
+    if me.current_id_count >= total:
+        print("ERROR: All nodes are already registered!")
+        return "1"
+    dict = request.get_json()         
     pk = dict["public_key"]
     ip = dict["ip"]
     if pk in me.ring:
-        print("ERROR: Public key already registered")
-        requests.post("http://" + ip + '/login/')
-        return "1"
+        if me.ring[pk][1] == ip:
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
+        else:
+            print("ERROR: Public key already registered")
+            requests.post("http://" + ip + '/login/')
+            return "1"
+        
     me.register_node_to_ring(pk, ip)
 
     if me.current_id_count == total - 1:
@@ -80,7 +87,10 @@ def register():
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring)) 
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))   
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
+        for x in me.ring:
+            if me.ring[x][0] == 0: continue
+            requests.get("http://" + me.ring[x][1] + '/t?to=' + me.ring[x][0] + '&amount=100/')
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
@@ -94,9 +104,9 @@ def get_new_node():
 
 @app.route('/ring/', methods=['GET'])
 def show_ring():
-    acc = [["id", "address", "balance"]]
+    acc = [("id", "address", "balance")]
     for x in me.ring:
-        acc.append([me.ring[x][0], me.ring[x][1], me.ring[x][2]])
+        acc.append((me.ring[x][0], me.ring[x][1], me.ring[x][2]))
     return jsonpickle.encode(acc)
 
 @app.route('/t', methods=['GET'])
