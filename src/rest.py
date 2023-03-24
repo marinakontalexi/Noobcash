@@ -43,7 +43,12 @@ def login():
 
 @app.route('/login/', methods=['POST'])
 def relogin():
-    me.wallet = me.create_wallet()
+    if request.data == None:
+        me.wallet = me.create_wallet()
+    else:
+        init_utxo = jsonpickle.decode(request.data)
+        addr = init_utxo.address
+        me.wallet.utxos[addr] = [init_utxo]
 
 @app.route('/register/', methods=['POST'])
 def register():
@@ -53,9 +58,11 @@ def register():
     print(pk, ip)
     if pk in me.ring:
         print("ERROR: Public key already registered")
-        requests.post("http://" + ip + '/login/')
+        requests.post("http://" + ip + '/login/', data = None)
         return "1"
     me.register_node_to_ring(pk, ip)
+    init_utxo = transaction.TransactionIO(0, me.wallet.address, NBCs)     # initial utxo
+    requests.post("http://" + ip + '/login/', data = jsonpickle.encode(init_utxo))
     if me.current_id_count == total - 1:
         for x in me.ring:
             if me.ring[x][0] == 0: continue
@@ -110,5 +117,4 @@ if __name__ == '__main__':
     port = args.port
 
     me = node.Node(ip + my_port)
-    me.wallet.utxos[me.wallet.address] = [transaction.TransactionIO(0, me.wallet.public_key, NBCs)] # initial transaction
     app.run(host=ip, port=port)
