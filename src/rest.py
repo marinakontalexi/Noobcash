@@ -123,7 +123,7 @@ def show_ring():
     return jsonpickle.encode(acc)
 
 @app.route('/chain_ring/', methods=['GET'])
-def show_ring():
+def show_chain_ring():
     acc = {-1 : ["address", "balance"]}
     for x in me.chain_ring:
         acc[me.chain_ring[x][0]] = [me.chain_ring[x][1], me.chain_ring[x][2]]
