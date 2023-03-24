@@ -168,11 +168,23 @@ class Node:
 			return
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
-		# if chain.length == 1:
-		# 	self.wallet.utxos = chain.init_utxos.copy()
-		# 	self.wallet.chain_utxos = chain.init_utxos.copy()
-		# else:
-		# 	self.wallet.utxos = self.wallet.chain_utxos.copy()
+		print("UTXOS:\n")
+		for x in self.wallet.utxos:
+			for y in self.wallet.utxos:
+				y.print_trans()
+
+		print("\nCHAIN UTXOS:\n")
+		for x in self.wallet.chain_utxos:
+			for y in self.wallet.chain_utxos:
+				y.print_trans()
+
+		print("\nRING")
+		for x in self.ring:
+			print(self.ring[x])
+		print("\nCHAIN RING")
+		for x in self.chain_ring:
+			print(self.chain_ring[x])
+			
 		return
 
 	def mine_block(self):
