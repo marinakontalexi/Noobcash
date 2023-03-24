@@ -48,12 +48,11 @@ class Node:
 
 	def receive(self, T):
 		if self.validate_transaction(T):
+			print("Transaction is valid\n")
 			B = self.add_transaction_to_block(T)
-			if B != None:
-				print("transaction received\n")
-				return True
-		print("transaction not received\n")	
-		return False
+			return B
+		print("Error: Transaction not valid\n")	
+		return None
 
 	def validate_transaction(self, T):
 		if not T.verify_signature(): 
@@ -81,13 +80,7 @@ class Node:
 			if not found: 
 				print("Error: Wrong Transaction Inputs!\n")
 				return False
-			
-		print("utxos after remove: ")
-		for x in self.wallet.utxos:
-			print("node: ", self.ring[x][0])
-			for y in self.wallet.utxos[x]:
-				y.print_trans()
-
+		
 		change = sum([x.amount for x in T.transaction_inputs]) -  T.amount
 		if change > 0:
 			correct_outputs = [transaction.TransactionIO(T.hash().digest(), str(T.sender_address), change),
@@ -106,13 +99,6 @@ class Node:
 		for x in T.transaction_outputs:
 			self.wallet.utxos[x.address].append(x)
 			self.ring[x.address][2] += x.amount
-
-		print("utxos after append: ")
-		for x in self.wallet.utxos:
-			print("node: ", self.ring[x][0])
-			for y in self.wallet.utxos[x]:
-				y.print_trans()
-		
 		return True
 
 	# blockchain functions
@@ -127,22 +113,25 @@ class Node:
 			return self.mine_block()
 		return None
 
-	def get_initial_blockchain(self, chain):
-		self.chain = chain
+	def get_initial_blockchain(self, chain, utxos):
+		if not self.validate_chain(chain):
+			print("ERROR: Invalid chain!")
+			return
+		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
-		tout = chain.listOfBlocks[0].listOfTransactions[0].transaction_outputs
-		for x in tout:
-			self.wallet.utxos[x.address].append(x)
+		self.wallet.utxos = utxos.copy()
 		return
 
 	def mine_block(self):
-		while (not self.valid_proof(self.currentBlock.hash(), blockchain.MINING_DIFFICULTY)):
+		myhash = self.currentBlock.hash()
+		while (not self.valid_proof(myhash, blockchain.MINING_DIFFICULTY)):
 			nonce = random.getrandbits(32)
 			setattr(self.currentBlock, 'nonce', nonce)
+			setattr(self.currentBlock, 'myhash', myhash)
+			myhash = self.currentBlock.hash()
 		return self.broadcast_block()
 
 	def broadcast_block(self):
-		self.chain.add_block(self.currentBlock)
 		res = self.currentBlock
 		self.chain.add_block(self.currentBlock)
 		self.create_new_block()
@@ -152,15 +141,43 @@ class Node:
 		return hash[0:difficulty] == "0"*difficulty
 
 	def receive_block(self, B):
-		# checks?
-		self.chain.add_block(B)
-		return
+		if self.validate_block(B):
+			print("Block is valid\n")
+			self.chain.add_block(B.copy())
+			return True
+		print("Warning: Block not valid!\n")
+		return False
 	
+	def validate_block(self, B):
+		if self.currentBlock.previousHash != B.previousHash:
+			print("Error: Wrong Previous Hash!\n")
+			return False
+		if B.myhash != B.hash():
+			print("Error: Wrong Hash!\n")
+			return False
+		return True
+
 	#concencus functions
 
-	# def valid_chain(self, chain):
-	# 	#check for the longer chain accroose all nodes
+	def validate_chain(self, chain):
+		self.currentBlock = chain.listOfBlocks[0].copy()
+		for i in range(1, len(chain.listOfBlocks)):
+			if self.validate_block(chain.listOfBlocks[i]):
+				self.currentBlock = chain.listOfBlocks[i].copy()
+			else: 
+				return False
+		return True
 
+	def choose_chain(self, chain, utxos):
+		safecurrent = self.currentBlock
+		if chain.length > self.chain.length:
+			if self.validate_chain(chain):
+				self.chain = chain.copy()
+				self.wallet.utxos = utxos.copy()
+			else:
+				self.currentBlock = safecurrent
+		return
+		
 
-	# def resolve_conflicts(self):
-	# 	#resolve correct chain
+	# def resolve_conflicts(self, B):
+	# 	return self.currentBlock.previousHash == B.previousHash

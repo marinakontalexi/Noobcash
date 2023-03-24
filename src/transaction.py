@@ -67,7 +67,7 @@ class Transaction:
         return signer.sign(self.hash())
     
     def print_trans(self):
-        print("Transaction: ", self.hash().hexdigest, ", ", self.sender_address, ", ", self.receiver_address, ", ", self.amount, "\n")
+        print("Transaction: ", self.hash().hexdigest, ", ", self.amount)
     
     def verify_signature(self):
         print(type(self.sender_address))

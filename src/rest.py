@@ -50,8 +50,8 @@ def relogin():
 
 @app.route('/genesis/', methods=['POST'])
 def get_genesis():
-    chain = jsonpickle.decode(request.data)
-    me.get_initial_blockchain(chain)
+    (chain, utxos) = jsonpickle.decode(request.data)
+    me.get_initial_blockchain(chain, utxos)
     return "0"
 
 
@@ -76,11 +76,11 @@ def register():
             me.wallet.utxos[x.address] = []
             me.wallet.utxos[x.address].append(x)
         me.currentBlock = block.Block(chain.lasthash)
-        me.chain = chain
+        me.chain = chain.copy()
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring)) 
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode(chain))     
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = (jsonpickle.encode(chain), jsonpickle.encode(me.wallet.utxos)))   
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
@@ -113,14 +113,45 @@ def make_transaction():
 def get_transaction():
     d = request.data
     t = jsonpickle.decode(d)
-    if me.receive(t):
-        return "transaction ok"
+    b = me.receive(t) 
+    if b == None:
+        return "0"
     else:
-        return "invalid transaction"
+        for x in me.ring:
+            requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(b))
+            return "block ok"
 
 @app.route('/balance/', methods=['GET'])
 def get_balance():
     return str(me.wallet.balance())
+
+@app.route('/blockchain/', methods=['GET'])
+def print_blockchain():
+    me.chain.print()
+
+
+@app.route('/newblock/', methods=['POST'])
+def get_block():
+    d = request.data
+    b = jsonpickle.decode(d)  
+    if not me.receive_block(b):    # diakladwsi
+        for x in me.ring:
+            requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
+    return "0"
+
+@app.route('/send_chain/', methods=['POST'])
+def send_chain():
+    ip = request.data
+    requests.post("http://" + ip + '/resolve/', 
+                    data = jsonpickle.encode(me.chain))
+    return "0"
+
+@app.route('/resolve/', methods=['POST'])
+def get_block():
+    d = request.data
+    c = jsonpickle.decode(d)
+    me.choose_chain(c)
+    return "0"
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
