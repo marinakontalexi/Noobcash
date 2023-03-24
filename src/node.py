@@ -43,6 +43,8 @@ class Node:
 			if s >= amount: break
 			transactionInputs.append(t)
 			s += t.amount
+		print("CREATE:\n")
+		print(self.ring[self.wallet.address][0], self.ring[receiver_address][0], receiver)
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
