@@ -35,6 +35,7 @@ def mine_function(event):
 def cli_function(name):
     project_path = "../"
     time.sleep(5)
+    print("THREAD HERE")
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
     time.sleep(30)
     
