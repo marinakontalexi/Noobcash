@@ -48,7 +48,7 @@ class Transaction:
         self.transaction_inputs = transactionInputs # λίστα από Transaction Input
         change = sum([x.amount for x in transactionInputs]) -  amount
         if change > 0:
-            self.transaction_outputs = [TransactionIO(transaction_id.digest(), sender_address, change), 
+            self.transaction_outputs = [TransactionIO(transaction_id.digest(), str(sender_address), change), 
                                         TransactionIO(transaction_id.digest(), receiver_address, amount)] # λίστα από Transaction Output 
         else:
             self.transaction_outputs = [TransactionIO(transaction_id.digest(), receiver_address, amount)]

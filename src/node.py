@@ -75,10 +75,10 @@ class Node:
 		
 		for x in T.transaction_inputs:			# check for valid transaction inputs
 			found = False
-			for t in self.wallet.utxos[T.sender_address]:
+			for t in self.wallet.utxos[str(T.sender_address)]:
 				if x.equal(t):
 					found = True
-					self.wallet.utxos[T.sender_address].remove(t)
+					self.wallet.utxos[str(T.sender_address)].remove(t)
 					if x.address in self.ring: 						# update ring dict
 						self.ring[x.address][2] -= x.amount
 					else: 
