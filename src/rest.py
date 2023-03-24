@@ -79,7 +79,7 @@ def register():
     ip = dict["ip"]
     if pk in me.ring:
         if me.ring[pk][1] == ip:
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
+            requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
         else:
             print("ERROR: Public key already registered")
             requests.post("http://" + ip + '/login/')
