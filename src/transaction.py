@@ -52,7 +52,8 @@ class Transaction:
                                         TransactionIO(transaction_id.digest(), receiver_address, amount)] # λίστα από Transaction Output 
         else:
             self.transaction_outputs = [TransactionIO(transaction_id.digest(), receiver_address, amount)]
-        self.signature = self.sign_transaction(sender_private_key)
+        if sender_address != b'0':
+            self.signature = self.sign_transaction(sender_private_key)
 
     def to_dict(self):
         return 
