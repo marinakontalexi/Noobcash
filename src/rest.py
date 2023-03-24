@@ -62,6 +62,8 @@ def relogin():
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
     for x in ring:
+        me.ring[x] = []
+        me.chain_ring[x] = []
         for i in range(3):
             me.ring[x][i] = ring[x][i]
             me.chain_ring[x][i] = ring[x][i]
