@@ -60,7 +60,6 @@ def register():
     dict = request.get_json()
     pk = dict["public_key"]
     ip = dict["ip"]
-    print(pk, ip)
     if pk in me.ring:
         print("ERROR: Public key already registered")
         requests.post("http://" + ip + '/login/')
