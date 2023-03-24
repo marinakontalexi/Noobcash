@@ -76,6 +76,9 @@ def register():
         init_B.add_transaction(init_t)
         init_B.myhash = init_B.hash()
         chain.add_block(init_B)
+        for x in init_t.transaction_outputs:
+            me.wallet.utxos[x.address] = []
+            me.wallet.utxos[x.address].append(x)
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring)) 
