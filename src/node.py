@@ -129,6 +129,9 @@ class Node:
 	def get_initial_blockchain(self, chain):
 		self.chain = chain
 		self.currentBlock = block.Block(chain.lasthash)
+		tout = chain.listOfBlocks[0].listOfTransactions[0].transaction_outputs
+		for x in tout:
+			self.wallet.utxos[x.address].append(x)
 		return
 
 	def mine_block(self):
