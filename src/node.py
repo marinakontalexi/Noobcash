@@ -147,7 +147,7 @@ class Node:
 		self.chain.add_block(self.currentBlock)
 		self.create_new_block()
 		return res
-	counter = 1
+	
 	def valid_proof(self, hash, difficulty):
 		return hash[0:difficulty] == "0"*difficulty
 
@@ -155,6 +155,7 @@ class Node:
 		# checks?
 		self.chain.add_block(B)
 		return
+	
 	#concencus functions
 
 	# def valid_chain(self, chain):
