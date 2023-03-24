@@ -63,6 +63,8 @@ class Node:
 			return False
 		
 		if self.ring[str(T.sender_address)][2] < T.amount:
+			print("sender's ", self.ring[str(T.sender_address)][0], "coins: ", self.ring[str(T.sender_address)][2])
+			print("amount: ", T.amount)
 			print("Error: Not enough NBCs for transaction!\n")
 			return False
 		
