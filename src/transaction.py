@@ -41,8 +41,8 @@ class Transaction:
         self.sender_address = sender_address # To public key του wallet από το οποίο προέρχονται τα χρήματα
         self.receiver_address = receiver_address # To public key του wallet στο οποίο θα καταλήξουν τα χρήματα
         self.amount = amount # το ποσό που θα μεταφερθεί
-        transaction_id = self.hash() # το hash του transaction
         self.transaction_inputs = transactionInputs # λίστα από Transaction Input
+        transaction_id = self.hash() # το hash του transaction
         change = sum([x.amount for x in transactionInputs]) -  amount
         if change > 0:
             self.transaction_outputs = [TransactionIO(transaction_id.digest(), str(sender_address), change), 
@@ -56,11 +56,7 @@ class Transaction:
         return 
         
     def hash(self):
-        #calculate self.hash
-        if self.transaction_inputs == []:
-            block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(self.amount), 'utf-8')
-        else:
-            block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(jsonpickle.encode(self.transaction_inputs)) + str(self.amount), 'utf-8')
+        block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(jsonpickle.encode(self.transaction_inputs)) + str(self.amount), 'utf-8')
         return SHA256.new(block_to_byte)
 
     def sign_transaction(self, sender_private_key):
