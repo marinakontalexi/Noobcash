@@ -170,12 +170,12 @@ class Node:
 		self.currentBlock = block.Block(chain.lasthash)
 		print("UTXOS:\n")
 		for x in self.wallet.utxos:
-			for y in self.wallet.utxos:
+			for y in self.wallet.utxos[x]:
 				y.print_trans()
 
 		print("\nCHAIN UTXOS:\n")
 		for x in self.wallet.chain_utxos:
-			for y in self.wallet.chain_utxos:
+			for y in self.wallet.chain_utxos[x]:
 				y.print_trans()
 
 		print("\nRING")
@@ -184,7 +184,7 @@ class Node:
 		print("\nCHAIN RING")
 		for x in self.chain_ring:
 			print(self.chain_ring[x])
-			
+
 		return
 
 	def mine_block(self):
