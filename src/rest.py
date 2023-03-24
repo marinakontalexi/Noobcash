@@ -1,14 +1,10 @@
 import requests
-from flask import Flask, jsonify, request, render_template
-import logging
+from flask import Flask, jsonify, request
 import threading
-import time
-# from flask_cors import CORS
 import block
 import node
 import blockchain
 import transaction
-import wallet
 import netifaces as ni
 import jsonpickle
 

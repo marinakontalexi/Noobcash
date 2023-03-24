@@ -1,5 +1,3 @@
-from Crypto.Hash import SHA256
-
 MINING_DIFFICULTY = 3
 
 class Blockchain:
