@@ -64,6 +64,7 @@ def register():
     init_utxo = transaction.TransactionIO(0, me.wallet.address, NBCs)     # initial utxo
     requests.post("http://" + ip + '/login/', data = jsonpickle.encode(init_utxo))
     if me.current_id_count == total - 1:
+        me.wallet.utxos[me.wallet.address] = [init_utxo]
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring))      
