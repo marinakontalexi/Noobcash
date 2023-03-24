@@ -128,6 +128,7 @@ def get_balance():
 @app.route('/blockchain/', methods=['GET'])
 def print_blockchain():
     me.chain.print()
+    return "Check stdout"
 
 
 @app.route('/newblock/', methods=['POST'])
@@ -142,6 +143,8 @@ def get_block():
 @app.route('/send_chain/', methods=['POST'])
 def send_chain():
     ip = request.data
+    print(ip)
+    print(type(ip))
     requests.post("http://" + ip + '/resolve/', 
                     data = jsonpickle.encode(me.chain))
     return "0"

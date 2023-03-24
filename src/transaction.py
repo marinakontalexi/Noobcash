@@ -70,7 +70,6 @@ class Transaction:
         print("Transaction: ", self.hash().hexdigest, ", ", self.amount)
     
     def verify_signature(self):
-        print(type(self.sender_address))
         pk = RSA.import_key(self.sender_address)
         verifier = PKCS1_v1_5.new(pk)
         return verifier.verify(self.hash(), self.signature)
