@@ -9,6 +9,7 @@ from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA256
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
+import jsonpickle
 
 #import requests
 from flask import Flask, jsonify, request, render_template
@@ -56,7 +57,7 @@ class Transaction:
         
     def hash(self):
         #calculate self.hash
-        block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(self.amount), 'utf-8')
+        block_to_byte = bytes(str(self.sender_address) + str(self.receiver_address) + str(jsonpickle.encode(self.transaction_inputs)) + str(self.amount), 'utf-8')
         return SHA256.new(block_to_byte)
 
     def sign_transaction(self, sender_private_key):

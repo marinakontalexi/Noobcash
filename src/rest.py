@@ -20,15 +20,18 @@ total = 2
 ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
 p = None
+event = threading.Event()
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
-def mine_function(name):
+def mine_function(event):
     # logging.info("Thread %s: starting", name)
     # time.sleep(2)
     # logging.info("Thread %s: finishing", name)
-    b = me.mine_block()
+    while not me.mine_block():
+        if event.is_set():
+            return
     for x in me.ring:
         if x == me.wallet.address: continue 
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(b))
@@ -139,7 +142,7 @@ def get_transaction():
     d = request.data
     t = jsonpickle.decode(d) 
     if me.receive(t):
-        p = threading.Thread(target = mine_function, args=(1,))
+        p = threading.Thread(target = mine_function, args=(event,))
         p.start()
         return "block ok"
     else:
@@ -165,6 +168,7 @@ def print_utxos():
 @app.route('/newblock/', methods=['POST'])
 def get_block():
     print("BLOCK RECEIVED\n")
+    event.set()
     d = request.data
     b = jsonpickle.decode(d)  
     if not me.receive_block(b):    # diakladwsi
