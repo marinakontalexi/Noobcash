@@ -166,11 +166,8 @@ class Node:
 			print("ERROR: Invalid chain!")
 			# self.currentBlock = safecurrent
 			return
-		print("\n1\n")
 		self.chain = chain.copy()
-		print("\n2\n")
 		self.currentBlock = block.Block(chain.lasthash)
-		print("\n3\n")
 		# if chain.length == 1:
 		# 	self.wallet.utxos = chain.init_utxos.copy()
 		# 	self.wallet.chain_utxos = chain.init_utxos.copy()
@@ -223,8 +220,8 @@ class Node:
 		self.chain = blockchain.Blockchain()
 		self.chain.add_block(genesis)
 		self.wallet.chain_utxos = chain.init_utxos
-		for b in chain.listOfBlocks:
-			if not self.validate_block(b):
+		for i in range(1, len(chain.listOfBlocks)):
+			if not self.validate_block(chain.listOfBlocks[i]):
 				return False
 		return True
 
