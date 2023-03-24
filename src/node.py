@@ -68,7 +68,7 @@ class Node:
 			return False
 		if T.sender_address in self.ring: print("valid key")
 		
-		if self.ring[T.sender_address.decode()][2] < T.amount:
+		if self.ring[str(T.sender_address)][2] < T.amount:
 			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
 			print("Error: Not enough NBCs for transaction!\n")
 			return False
