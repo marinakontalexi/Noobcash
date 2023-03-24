@@ -61,18 +61,13 @@ def relogin():
 @app.route('/genesis/', methods=['POST'])
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
-    # for x in ring:
-    #     me.wallet.utxos[x] = []
-    #     me.wallet.chain_utxos[x] = []
-    me.ring = ring.copy()
-    me.chain_ring = ring.copy()
-    for x in me.ring:
-        e =  me.ring[x][0]
-        me.ring[x][0] = 100
-        print(me.ring[x][0] == me.chain_ring[x][0])
-        me.ring[x][0] = e
-    me.wallet.utxos = chain.init_utxos.copy()
-    me.wallet.chain_utxos = chain.init_utxos.copy()
+    for x in ring:
+        for i in range(3):
+            me.ring[x][i] = ring[x][i]
+            me.chain_ring[x][i] = ring[x][i]
+        for t in chain.init_utxos[x]:
+            me.wallet.utxos[x].append(t)
+            me.wallet.chain_utxos[x].append(t)
     me.get_initial_blockchain(chain)
     return "0"
 
