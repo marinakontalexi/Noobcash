@@ -52,7 +52,6 @@ class Node:
 		return transaction.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 
 	def receive(self, T):
-		# print("balance_receive: ", self.ring[T.sender_address][2])
 		print("RECEIVE:\n")
 		print(type(T.sender_address), type(T.receiver_address))
 		if self.validate_transaction(T):
@@ -73,7 +72,6 @@ class Node:
 		if T.sender_address in self.ring: print("valid key")
 		
 		if self.ring[str(T.sender_address)][2] < T.amount:
-			# print("balance_validate: ", self.ring[T.sender_address][2], T.amount)
 			print("Error: Not enough NBCs for transaction!\n")
 			return False
 		
@@ -110,8 +108,6 @@ class Node:
 		for x in T.transaction_outputs:
 			self.wallet.utxos[T.receiver_address].append(x)
 			self.ring[x.address][2] += x.amount
-			print("x.address: ", self.ring[x.address][0])
-			print("amount: ", self.ring[x.address][2])
 		return True
 
 	# blockchain functions
