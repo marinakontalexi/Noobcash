@@ -64,10 +64,12 @@ def relogin():
 
 @app.route('/genesis/', methods=['POST'])
 def get_genesis():
-    (chain, utxos) = jsonpickle.decode(request.data)
+    (ring, chain, utxos) = jsonpickle.decode(request.data)
+    for x in ring:
+        me.wallet.utxos[x] = []
+    me.ring = ring.copy()
     me.get_initial_blockchain(chain, utxos)
     return "0"
-
 
 @app.route('/register/', methods=['POST'])
 def register():
@@ -100,22 +102,12 @@ def register():
         me.chain = chain.copy()
         for x in me.ring:
             if me.ring[x][0] == 0: continue
-            requests.post("http://" + me.ring[x][1] + '/newnode/', data = jsonpickle.encode(me.ring)) 
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, chain, me.wallet.utxos)))
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             t = me.create_transaction(me.ring[x][0], 100)
             for y in me.ring:
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
-    return "0"
-
-@app.route('/newnode/', methods=['POST'])
-def get_new_node():
-    d = request.data
-    ring = jsonpickle.decode(d)
-    for x in ring:
-        me.wallet.utxos[x] = []
-    me.ring = ring.copy()
     return "0"
 
 @app.route('/ring/', methods=['GET'])
