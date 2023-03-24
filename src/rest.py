@@ -61,11 +61,9 @@ def relogin():
 @app.route('/genesis/', methods=['POST'])
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
-    # for x in ring:
-    #     me.wallet.utxos[x] = []
-    #     me.wallet.chain_utxos[x] = []
-    me.ring = ring.copy()
-    me.chain_ring = me.ring.copy()
+    for x in ring:
+        me.ring[x] = ring[x].copy()
+        me.me.chain_ring[x] = ring[x].copy()
     me.wallet.utxos = chain.init_utxos.copy()
     me.wallet.chain_utxos = chain.init_utxos.copy()
     me.get_initial_blockchain(chain)
@@ -81,7 +79,7 @@ def register():
     ip = dict["ip"]
     if pk in me.ring:
         if me.ring[pk][1] == ip:
-            requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((me.chain_ring, me.chain)))
+            requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((me.chain_ring.copy(), me.chain)))
         else:
             print("ERROR: Public key already registered")
             requests.post("http://" + ip + '/login/')
