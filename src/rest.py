@@ -90,7 +90,7 @@ def register():
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
         for x in me.ring:
             if me.ring[x][0] == 0: continue
-            requests.get("http://" + me.ring[x][1] + '/t?to=' + str(me.ring[x][0]) + '&amount=100/')
+            requests.get("http://" + me.ring[x][1] + '/t?to=' + str(me.ring[x][0]) + '&amount=100')
     return "0"
 
 @app.route('/newnode/', methods=['POST'])
@@ -104,9 +104,9 @@ def get_new_node():
 
 @app.route('/ring/', methods=['GET'])
 def show_ring():
-    acc = [("id", "address", "balance")]
+    acc = {-1 : ["address", "balance"]}
     for x in me.ring:
-        acc.append((me.ring[x][0], me.ring[x][1], me.ring[x][2]))
+        acc[me.ring[x][0]] = [me.ring[x][1], me.ring[x][2]]
     return jsonpickle.encode(acc)
 
 @app.route('/t', methods=['GET'])
