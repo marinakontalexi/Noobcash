@@ -17,6 +17,7 @@ class Blockchain:
         b = Blockchain()
         setattr(b, 'listOfBlocks', self.listOfBlocks.copy())
         setattr(b, 'length', self.length)
+        setattr(b, 'lasthash', self.lasthash)
         return b
 
     def print(self):
