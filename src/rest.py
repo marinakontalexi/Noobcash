@@ -137,6 +137,7 @@ def get_block():
     b = jsonpickle.decode(d)  
     if not me.receive_block(b):    # diakladwsi
         for x in me.ring:
+            if x == me.wallet.address: continue
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     return "0"
 
