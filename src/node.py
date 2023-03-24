@@ -107,6 +107,7 @@ class Node:
 		return
 	
 	def add_transaction_to_block(self, T):
+		self.currentBlock.print()
 		self.currentBlock.add_transaction(T)
 		if len(self.currentBlock.listOfTransactions) == block.capacity:
 			return True
