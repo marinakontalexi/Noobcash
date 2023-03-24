@@ -147,7 +147,7 @@ def send_chain():
     return "0"
 
 @app.route('/resolve/', methods=['POST'])
-def get_block():
+def resolve():
     d = request.data
     c = jsonpickle.decode(d)
     me.choose_chain(c)
