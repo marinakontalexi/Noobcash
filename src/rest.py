@@ -52,6 +52,7 @@ def relogin():
 def get_genesis():
     chain = jsonpickle.decode(request.data)
     me.get_initial_blockchain(chain)
+    return "0"
 
 
 @app.route('/register/', methods=['POST'])
