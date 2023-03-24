@@ -147,7 +147,10 @@ class Node:
 		
 		for x in T.transaction_outputs:
 			self.wallet.chain_utxos[x.address].append(x)
+			print(x.amount)
+			print(self.chain_ring[x.address][2])
 			self.chain_ring[x.address][2] += x.amount
+			print(self.chain_ring[x.address][2])
 		return True
 
 	def create_new_block(self):
@@ -224,10 +227,17 @@ class Node:
 		if chain.length > self.chain.length:
 			self.chain = chain.copy()
 			self.currentBlock = block.Block(chain.lasthash)
-			self.wallet.utxos = utxos.copy()
-			self.wallet.chain_utxos = utxos.copy()
-			self.ring = ring.copy()
-			self.chain_ring = ring.copy()
+			for x in ring:
+				self.ring[x] = []
+				self.chain_ring[x] = []
+				for i in range(3):
+					self.ring[x].append(ring[x][i])
+					self.chain_ring[x].append(ring[x][i])
+				self.wallet.utxos[x] = []
+				self.wallet.chain_utxos[x] = []
+				for t in utxos[x]:
+					self.wallet.utxos[x].append(t)
+					self.wallet.chain_utxos[x].append(t)
 		return
 		
 
