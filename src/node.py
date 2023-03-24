@@ -83,7 +83,9 @@ class Node:
 			
 		print("utxos after remove: ")
 		for x in self.wallet.utxos:
-			self.wallet.utxos[x].print_trans()
+			print("node: ", self.ring[x][0])
+			for y in self.wallet.utxos[x]:
+				y.print_trans()
 
 		change = sum([x.amount for x in T.transaction_inputs]) -  T.amount
 		if change > 0:
@@ -106,7 +108,9 @@ class Node:
 
 		print("utxos after append: ")
 		for x in self.wallet.utxos:
-			self.wallet.utxos[x].print_trans()
+			print("node: ", self.ring[x][0])
+			for y in self.wallet.utxos[x]:
+				y.print_trans()
 		
 		return True
 

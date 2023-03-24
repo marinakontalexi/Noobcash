@@ -51,9 +51,6 @@ def relogin():
 @app.route('/genesis/', methods=['POST'])
 def get_genesis():
     chain = jsonpickle.decode(request.data)
-    print("GENESIS:")
-    for x in me.wallet.utxos:
-        print(x)
     me.get_initial_blockchain(chain)
     return "0"
 
@@ -93,9 +90,6 @@ def get_new_node():
     for x in ring:
         me.wallet.utxos[x] = []
     me.ring = ring.copy()
-    print("NEWNODE:")
-    for x in me.wallet.utxos:
-        print(x)
     return "0"
 
 @app.route('/ring/', methods=['GET'])
