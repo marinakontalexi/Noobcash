@@ -122,6 +122,13 @@ def show_ring():
         acc[me.ring[x][0]] = [me.ring[x][1], me.ring[x][2]]
     return jsonpickle.encode(acc)
 
+@app.route('/chain_ring/', methods=['GET'])
+def show_ring():
+    acc = {-1 : ["address", "balance"]}
+    for x in me.chain_ring:
+        acc[me.chain_ring[x][0]] = [me.chain_ring[x][1], me.chain_ring[x][2]]
+    return jsonpickle.encode(acc)
+
 @app.route('/t', methods=['GET'])
 def make_transaction():
     args = request.args
