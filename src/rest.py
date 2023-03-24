@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, request
 import threading
 import block
 import node
@@ -7,6 +7,7 @@ import blockchain
 import transaction
 import netifaces as ni
 import jsonpickle
+import time
 
 master_node = '192.168.2.1'
 master_port = ":5000"
@@ -82,16 +83,16 @@ def register():
         return "1"
     dict = request.get_json()         
     pk = dict["public_key"]
-    ip = dict["ip"]
+    IP = dict["ip"]
     if pk in me.ring:
         if me.ring[pk][1] == ip:
-            requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((me.chain_ring.copy(), me.chain)))
+            requests.post("http://" + IP + '/genesis/', data = jsonpickle.encode((me.chain_ring.copy(), me.chain)))
         else:
             print("ERROR: Public key already registered")
-            requests.post("http://" + ip + '/login/')
+            requests.post("http://" + IP + '/login/')
         return "1"
         
-    me.register_node_to_ring(pk, ip)
+    me.register_node_to_ring(pk, IP)
 
     if me.current_id_count == total - 1:
         init_t = transaction.Transaction(b'0', me.wallet.address, 100*total, b'0', [])
@@ -186,8 +187,8 @@ def get_block():
 
 @app.route('/send_chain/', methods=['POST'])
 def send_chain():
-    ip = request.data
-    requests.post("http://" + ip.decode() + '/resolve/', 
+    IP = request.data
+    requests.post("http://" + IP.decode() + '/resolve/', 
                     data = jsonpickle.encode((me.chain, me.wallet.chain_utxos, me.chain_ring)))
     return "0"
 
@@ -209,3 +210,9 @@ if __name__ == '__main__':
 
     me = node.Node(ip + my_port)
     app.run(host=ip, port=port)
+
+    requests.get("http://" + ip  + my_port + "/login/")
+    project_path = "../"
+    time.sleep(30)
+    f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
+    print(f.readline())
