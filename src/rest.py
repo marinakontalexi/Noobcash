@@ -78,6 +78,7 @@ def register():
     pk = dict["public_key"]
     ip = dict["ip"]
     if pk in me.ring:
+        print("here")
         if me.ring[pk][1] == ip:
             requests.post("http://" + ip + '/genesis/', data = jsonpickle.encode((me.chain_ring, me.chain)))
         else:
@@ -93,10 +94,10 @@ def register():
         init_B.add_transaction(init_t)
         init_B.myhash = init_B.hash()
         chain.add_block(init_B)
+        me.wallet.utxos[x.address] = []
+        me.wallet.chain_utxos[x.address] = []
         for x in init_t.transaction_outputs:
-            me.wallet.utxos[x.address] = []
             me.wallet.utxos[x.address].append(x)
-            me.wallet.chain_utxos[x.address] = []
             me.wallet.chain_utxos[x.address].append(x)
         me.currentBlock = block.Block(chain.lasthash)
         me.chain = chain.copy()
