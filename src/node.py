@@ -49,7 +49,9 @@ class Node:
 		if self.validate_transaction(T):
 			B = self.add_transaction_to_block(T)
 			if B != None:
+				print("transaction received\n")
 				return True
+		print("transaction not received\n")	
 		return False
 
 	def validate_transaction(self, T):
@@ -59,7 +61,6 @@ class Node:
 		if T.receiver_address == -1:
 			print("Error: Wrong receiver id!\n")
 			return False
-		if T.sender_address in self.ring: print("valid key")
 		
 		if self.ring[str(T.sender_address)][2] < T.amount:
 			print("Error: Not enough NBCs for transaction!\n")
@@ -82,7 +83,7 @@ class Node:
 			
 		print("utxos after remove: ")
 		for x in self.wallet.utxos:
-			print(x)
+			x.print_trans()
 
 		change = sum([x.amount for x in T.transaction_inputs]) -  T.amount
 		if change > 0:
@@ -105,7 +106,7 @@ class Node:
 
 		print("utxos after append: ")
 		for x in self.wallet.utxos:
-			print(x)
+			x.print_trans()
 		
 		return True
 

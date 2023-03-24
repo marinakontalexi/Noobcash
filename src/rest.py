@@ -120,10 +120,8 @@ def get_transaction():
     d = request.data
     t = jsonpickle.decode(d)
     if me.receive(t):
-        print("transaction received\n")
         return "transaction ok"
     else:
-        print("transaction not received\n")
         return "invalid transaction"
 
 @app.route('/balance/', methods=['GET'])
