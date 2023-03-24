@@ -144,14 +144,14 @@ def get_block():
 def send_chain():
     ip = request.data
     requests.post("http://" + ip.decode() + '/resolve/', 
-                    data = jsonpickle.encode(me.chain))
+                    data = jsonpickle.encode(me.chain, me.wallet.utxos))
     return "0"
 
 @app.route('/resolve/', methods=['POST'])
 def resolve():
     d = request.data
-    c = jsonpickle.decode(d)
-    me.choose_chain(c)
+    (c, u) = jsonpickle.decode(d)
+    me.choose_chain(c, u)
     return "0"
 
 if __name__ == '__main__':

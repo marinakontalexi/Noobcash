@@ -114,8 +114,10 @@ class Node:
 		return None
 
 	def get_initial_blockchain(self, chain, utxos):
+		safecurrent = self.currentBlock
 		if not self.validate_chain(chain):
 			print("ERROR: Invalid chain!")
+			self.currentBlock = safecurrent
 			return
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
@@ -169,13 +171,8 @@ class Node:
 		return True
 
 	def choose_chain(self, chain, utxos):
-		safecurrent = self.currentBlock
 		if chain.length > self.chain.length:
-			if self.validate_chain(chain):
-				self.chain = chain.copy()
-				self.wallet.utxos = utxos.copy()
-			else:
-				self.currentBlock = safecurrent
+			self.get_initial_blockchain(chain, utxos)
 		return
 		
 
