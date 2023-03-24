@@ -90,8 +90,8 @@ def register():
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((chain, me.wallet.utxos)))
         for x in me.ring:
             if me.ring[x][0] == 0: continue
+            t = me.create_transaction(me.ring[x][0], 100)
             for y in me.ring:
-                t = me.create_transaction(me.ring[x][0], 100)
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
     return "0"
 
