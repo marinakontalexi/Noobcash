@@ -34,7 +34,7 @@ def mine_function(event):
             return
     for x in me.ring:
         if x == me.wallet.address: continue 
-        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(b))
+        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.currentBlock))
 
 
 #.......................................................................................
@@ -189,6 +189,7 @@ def resolve():
     d = request.data
     (c, u) = jsonpickle.decode(d)
     me.choose_chain(c, u)
+    event.clear()
     return "0"
 
 if __name__ == '__main__':

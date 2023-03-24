@@ -124,13 +124,11 @@ class Node:
 		return
 
 	def mine_block(self):
+		nonce = random.getrandbits(32)
+		setattr(self.currentBlock, 'nonce', nonce)
 		myhash = self.currentBlock.hash()
-		while (not self.valid_proof(myhash, blockchain.MINING_DIFFICULTY)):
-			nonce = random.getrandbits(32)
-			setattr(self.currentBlock, 'nonce', nonce)
-			setattr(self.currentBlock, 'myhash', myhash)
-			myhash = self.currentBlock.hash()
-		return self.broadcast_block()
+		setattr(self.currentBlock, 'myhash', myhash)
+		return self.valid_proof(myhash, blockchain.MINING_DIFFICULTY)
 
 	def broadcast_block(self):
 		res = self.currentBlock
