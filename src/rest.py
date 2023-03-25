@@ -16,7 +16,7 @@ master_port = ":5000"
 my_port = ":5000"
 total = 2
 project_path = "../"
-color_cli = "magenta"
+color_cli = "light_magenta"
 color_buffer = "green"
 color_miner = "light_blue"
 
@@ -83,13 +83,13 @@ def cli_function():
     s = f.readline()
     t = time.time()
     while s != "":
-        print(colored("Sending transaction: " + s, color_cli))
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: 
             s = f.readline()
             continue
-        print(colored("Transaction was posted", color_cli))
+        
+        print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         print(colored("Post request finished", "magenta"))
         time.sleep(60)
