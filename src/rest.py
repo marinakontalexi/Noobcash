@@ -22,7 +22,8 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
-def queue_function(p, qevent):
+def queue_function(qevent):
+    p = None
     while True:
         if qevent.is_set():
             return
@@ -69,7 +70,7 @@ def cli_function(p):
     time.sleep(10)
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
     time.sleep(10)    
-    queue = threading.Thread(target = queue_function, args=(p,qevent), daemon=True)
+    queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
     time.sleep(20)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
@@ -260,11 +261,10 @@ if __name__ == '__main__':
 
     me = node.Node(ip + my_port)
 
-    p = None
     blc_rcv = threading.Event()
     qevent = threading.Event()
     q = []
-    cli = threading.Thread(target = cli_function, args=(p), daemon=True)
+    cli = threading.Thread(target = cli_function, args=(), daemon=True)
     cli.start()
 
     app.run(host=ip, port=port)
