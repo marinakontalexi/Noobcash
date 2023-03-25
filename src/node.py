@@ -194,6 +194,7 @@ class Node:
 		if self.validate_block(B):
 			print("Block is valid\n")
 			self.chain.add_block(B.copy())
+			self.currentBlock = block.Block(B.myhash)
 			return True
 		print("Warning: Block not valid!\n")
 		return False
