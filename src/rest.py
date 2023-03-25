@@ -27,27 +27,21 @@ def queue_function(qevent):
     while True:
         if qevent.is_set():
             return
-        if len(me.currentBlock.listOfTransactions) == block.capacity:
-            print("block size is 2!")
         if len(q) == 0: continue
-        if p == None: 
-            if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                print("p is None and block is full")
-                p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                p.start()
+        if p == None:
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print("p is None and block is not full")
                 t = q.pop(0)
                 if me.receive(t):                
                     print("t was received") 
                     me.add_transaction_to_block(t)
-                    print("t was added to block. Block size is ", len(me.currentBlock.listOfTransactions))  
+                    print("t was added to block. Block size is ", len(me.currentBlock.listOfTransactions))
+                if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                    print("p is None and block is full")
+                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                    p.start()  
         elif p.is_alive(): continue
         else:
-            if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                print("p is not alive and block is full")
-                p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                p.start()
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print("p is not alive and block is not full")
                 t = q.pop(0)
@@ -55,6 +49,10 @@ def queue_function(qevent):
                     print("t was received") 
                     me.add_transaction_to_block(t)
                     print("t was added to block") 
+                if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                    print("p is not alive and block is full")
+                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                    p.start()
 
 def mine_function(event):
     print("I start mining")
