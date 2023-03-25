@@ -83,9 +83,9 @@ def cli_function():
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: continue
-        print(colored("Transaction was posted", 'purple'))
+        print(colored("Transaction was posted", 'magenda'))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        print(colored("post request finished", 'purple'))
+        print(colored("post request finished", 'magenda'))
         time.sleep(10)
         s = f.readline()
 
