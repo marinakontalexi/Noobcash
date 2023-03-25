@@ -10,14 +10,14 @@ import socket
 import jsonpickle
 import time
 
-master_node = '192.168.1.5'
+master_node = '10.0.0.1'
 master_port = ":5000"
 my_port = ":5000"
 total = 2
 project_path = "../"
 
-# ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
-ip = socket.gethostbyname(socket.gethostname())
+ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
+# ip = socket.gethostbyname(socket.gethostname())
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
