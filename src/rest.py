@@ -51,15 +51,13 @@ def queue_function(qevent):
                 m = time.time()
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print(colored("p is None and block is not full", color_buffer))
-                t = q.pop(0)
-                if me.receive(t):                
-                    print(colored("t was received", color_buffer)) 
-                    me.add_transaction_to_block(t)
-                    print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
-                    if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                        print(colored("p is None and block is full", color_buffer))
-                        p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                        p.start()  
+                t = q.pop(0)                
+                me.add_transaction_to_block(t)
+                print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
+                if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                    print(colored("p is None and block is full", color_buffer))
+                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                    p.start()  
 
 def mine_function(event):
     print(colored("I start mining", color_miner))
@@ -224,8 +222,9 @@ def get_transaction():
     # for x in me.wallet.chain_utxos:
     #     for y in me.wallet.chain_utxos[x]:
     #         y.print_trans()
-    q.append(t)
-    print("I pushed a transaction")
+    if me.receive(t): 
+        q.append(t)
+        print("I pushed a transaction")
     return "0"
             
 
