@@ -9,6 +9,7 @@ import netifaces as ni
 import socket
 import jsonpickle
 import time
+from termcolor import colored
 
 master_node = '10.0.0.1'
 master_port = ":5000"
@@ -38,10 +39,10 @@ def queue_function(qevent):
                     print("t was received") 
                     me.add_transaction_to_block(t)
                     print("t was added to block. Block size is ", len(me.currentBlock.listOfTransactions))
-                if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                    print("p is None and block is full")
-                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                    p.start()  
+                    if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                        print("p is None and block is full")
+                        p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                        p.start()  
         
         else:
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
@@ -51,10 +52,10 @@ def queue_function(qevent):
                     print("t was received") 
                     me.add_transaction_to_block(t)
                     print("t was added to block") 
-                if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                    print("p is not alive and block is full")
-                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                    p.start()
+                    if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                        print("p is not alive and block is full")
+                        p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                        p.start()
 
 def mine_function(event):
     print("I start mining")
@@ -82,10 +83,12 @@ def cli_function():
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: continue
-        print("Transaction was posted")
+        print(colored("Transaction was posted", 'purple'))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
+        print(colored("post request finished", 'purple'))
         time.sleep(10)
         s = f.readline()
+
     print("Time", time.time() - t)
     # kill queue
 #.......................................................................................
