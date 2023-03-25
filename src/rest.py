@@ -247,7 +247,7 @@ def resolve():
     (c, u, r) = jsonpickle.decode(d)
     me.choose_chain(c, u, r)
     qevent.clear()
-    queue = threading.Thread(target = queue_function, args=(p,qevent), daemon=True)
+    queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
     return "0"
 
