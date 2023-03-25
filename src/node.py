@@ -183,7 +183,7 @@ class Node:
 		res = self.currentBlock
 		self.chain.add_block(self.currentBlock)
 		self.wallet.utxos = self.wallet.chain_utxos.copy()
-		self.ring = self.chain_ring.copy()
+		self.chain_ring = self.ring.copy()
 		self.create_new_block()
 		return res
 	
