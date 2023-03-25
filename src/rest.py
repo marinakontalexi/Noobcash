@@ -47,7 +47,7 @@ def queue_function(qevent):
                         print(colored("p is None and block is full", color_buffer))
                         p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                         p.start()  
-                        
+
 def mine_function(event):
     print(colored("I start mining", color_miner))
     while not me.mine_block():
@@ -194,7 +194,7 @@ def make_transaction():
 
 @app.route('/broadcast/', methods=['POST'])
 def get_transaction():
-    print("TRANSACTION RECEIVED\n")
+    print("TRANSACTION RECEIVED")
     d = request.data
     t = jsonpickle.decode(d) 
     q.append(t)
@@ -220,9 +220,8 @@ def print_utxos():
 
 @app.route('/newblock/', methods=['POST'])
 def get_block():
-    print("BLOCK RECEIVED\n")
+    print("BLOCK RECEIVED")
     qevent.set()
-    print("qevent is set")
     blc_rcv.set()
     d = request.data
     b = jsonpickle.decode(d)  
