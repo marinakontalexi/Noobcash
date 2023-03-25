@@ -16,6 +16,9 @@ master_port = ":5000"
 my_port = ":5000"
 total = 2
 project_path = "../"
+color_cli = "magenda"
+color_buffer = "green"
+color_miner = "light_blue"
 
 ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
@@ -24,47 +27,48 @@ app = Flask(__name__)
 chain = blockchain.Blockchain()
 
 def queue_function(qevent):
-    print("Buffer is active")
+    print(colored("Buffer is active",color_buffer))
     p = None
     while True:
         if qevent.is_set():
+            print(colored("Buffer exits",color_buffer))
             return
         if len(q) == 0: continue
         if p != None and p.is_alive(): continue
         if p == None:
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
-                print("p is None and block is not full")
+                print(colored("p is None and block is not full", color_buffer))
                 t = q.pop(0)
                 if me.receive(t):                
-                    print("t was received") 
+                    print(colored("t was received", color_buffer)) 
                     me.add_transaction_to_block(t)
-                    print("t was added to block. Block size is ", len(me.currentBlock.listOfTransactions))
+                    print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
                     if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                        print("p is None and block is full")
+                        print(colored("p is None and block is full", color_buffer))
                         p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                         p.start()  
         
         else:
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
-                print("p is not alive and block is not full")
+                print(colored("p is not alive and block is not full", color_buffer))
                 t = q.pop(0)
                 if me.receive(t):                
-                    print("t was received") 
+                    print(colored("t was received", color_buffer)) 
                     me.add_transaction_to_block(t)
-                    print("t was added to block") 
-                    if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                        print("p is not alive and block is full")
+                    print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
+                    if len(me.currentBlock.listOfTransactions) == block.capacity                
+                        print(colored("p is None and block is full", color_buffer))
                         p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                         p.start()
 
 def mine_function(event):
-    print("I start mining")
+    print(colored("I start mining", color_miner))
     while not me.mine_block():
         if event.is_set():
-            print("I stop mining")
+            print(colored("I stop mining", color_miner))
             event.clear()
             return
-    print("mine ok")
+    print(colored("mine ok", color_miner))
     newblock = me.broadcast_block()
     for x in me.ring:
         if x == me.wallet.address: continue 
@@ -77,17 +81,21 @@ def cli_function():
     queue.start()
     time.sleep(10)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
-    s = s = f.readline()
+    s = f.readline()
     t = time.time()
     while s != "":
         [r, amount] = s.split()
         rcv = r[2:]
-        if int(rcv) >= total: continue
-        print(colored("Transaction was posted", "magenta"))
+        if int(rcv) >= total: 
+            s = f.readline()
+            print(colored("Sending transaction: " + s, color_cli))
+            continue
+        print(colored("Transaction was posted", color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        print(colored("post request finished", "magenta"))
+        print(colored("Post request finished", "magenta"))
         time.sleep(10)
         s = f.readline()
+        print(colored("Sending transaction: " + s, color_cli))
 
     print("Time", time.time() - t)
     # kill queue
@@ -228,6 +236,7 @@ def print_utxos():
 def get_block():
     print("BLOCK RECEIVED\n")
     qevent.set()
+    print("qevent is set")
     blc_rcv.set()
     d = request.data
     b = jsonpickle.decode(d)  
