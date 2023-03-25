@@ -29,7 +29,11 @@ chain = blockchain.Blockchain()
 def queue_function(qevent):
     print(colored("Buffer is active",color_buffer))
     p = None
+    s = time.time()
     while True:
+        if time.time() - s > 3:
+            print(colored("Length of queue " + str(len(q)), color_buffer))
+            s = time.time()
         if qevent.is_set():
             print(colored("Buffer exits",color_buffer))
             return
