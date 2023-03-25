@@ -83,18 +83,17 @@ def cli_function():
     s = f.readline()
     t = time.time()
     while s != "":
+        print(colored("Sending transaction: " + s, color_cli))
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: 
             s = f.readline()
-            print(colored("Sending transaction: " + s, color_cli))
             continue
         print(colored("Transaction was posted", color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         print(colored("Post request finished", "magenta"))
-        time.sleep(10)
+        time.sleep(60)
         s = f.readline()
-        print(colored("Sending transaction: " + s, color_cli))
 
     print("Time", time.time() - t)
     # kill queue
