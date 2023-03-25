@@ -19,6 +19,7 @@ project_path = "../"
 color_cli = "light_magenta"
 color_buffer = "green"
 color_miner = "light_blue"
+color_time = "dark_grey"
 
 ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
@@ -33,7 +34,7 @@ def queue_function(qevent):
     m = time.time()
     while True:
         if time.time() - s > 5:
-            print(colored("Length of queue " + str(len(q)), color_buffer))
+            print(colored("Length of queue " + str(len(q)), color_time))
             s = time.time()
         if qevent.is_set():
             print(colored("Buffer exits",color_buffer))
@@ -41,12 +42,12 @@ def queue_function(qevent):
         if len(q) == 0: continue
         if p != None and p.is_alive(): 
             if time.time() - l > 3:
-                print(colored("p is alive", color_buffer))
+                print(colored("p is alive", color_time))
                 l = time.time()
             continue
         if p == None or p != None and not p.is_alive():
             if time.time() - m > 3:
-                print(colored("p is not alive", color_buffer))
+                print(colored("p is not alive", color_time))
                 m = time.time()
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print(colored("p is None and block is not full", color_buffer))
