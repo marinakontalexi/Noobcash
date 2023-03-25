@@ -27,7 +27,7 @@ def queue_function(qevent):
     while True:
         if qevent.is_set():
             return
-        if len(me.currentBlock.listOfTransactions) == 2:
+        if len(me.currentBlock.listOfTransactions) == block.capacity:
             print("block size is 2!")
         if len(q) == 0: continue
         if p == None: 
