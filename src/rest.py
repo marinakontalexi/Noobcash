@@ -35,7 +35,7 @@ def queue_function(qevent):
             return
         if len(q) == 0: continue
         if p != None and p.is_alive(): continue
-        if p == None:
+        if p == None or p != None and not p.is_alive():
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print(colored("p is None and block is not full", color_buffer))
                 t = q.pop(0)
