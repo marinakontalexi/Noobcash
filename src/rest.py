@@ -21,9 +21,7 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
-p = None
-blc_rcv = threading.Event()
-q = []
+
 def queue_function():
     while True:
         if len(q) == 0: continue
@@ -241,7 +239,10 @@ if __name__ == '__main__':
     port = args.port
 
     me = node.Node(ip + my_port)
-
+    
+    p = None
+    blc_rcv = threading.Event()
+    q = []
     cli = threading.Thread(target = cli_function, args=(1,), daemon=True)
     cli.start()
 
