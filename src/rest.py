@@ -86,7 +86,7 @@ def cli_function():
     log = 0
     while s != "":
         if log == 10:
-            print(colored("I posted ", log, " transactions", color_cli))
+            print(colored("I posted " + str(log) + " transactions", color_cli))
             break
         [r, amount] = s.split()
         rcv = r[2:]
@@ -96,7 +96,7 @@ def cli_function():
         print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         log += 1
-        time.sleep(15)
+        time.sleep(5)
         s = f.readline()
 
     print("Time", time.time() - t)
