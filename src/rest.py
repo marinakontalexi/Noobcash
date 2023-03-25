@@ -39,7 +39,7 @@ def queue_function(qevent):
                 if me.receive(t):                
                     print("t was received") 
                     me.add_transaction_to_block(t)
-                    print("t was added to block") 
+                    print("t was added to block. Block size is ", len(me.currentBlock.listOfTransactions))  
         elif p.is_alive(): continue
         else:
             if len(me.currentBlock.listOfTransactions) == block.capacity:                
@@ -72,7 +72,7 @@ def cli_function():
     time.sleep(10)    
     queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
-    time.sleep(20)
+    time.sleep(10)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = s = f.readline()
     t = time.time()
