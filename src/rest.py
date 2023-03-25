@@ -68,8 +68,7 @@ def mine_function(event):
 
 def cli_function():
     time.sleep(10)
-    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
-    time.sleep(10)    
+    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")   
     queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
     time.sleep(10)
