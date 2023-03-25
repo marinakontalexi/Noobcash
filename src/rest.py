@@ -16,7 +16,7 @@ master_port = ":5000"
 my_port = ":5000"
 total = 2
 project_path = "../"
-color_cli = "magenda"
+color_cli = "magenta"
 color_buffer = "green"
 color_miner = "light_blue"
 
