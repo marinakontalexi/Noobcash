@@ -198,6 +198,7 @@ def get_transaction():
     d = request.data
     t = jsonpickle.decode(d) 
     q.append(t)
+    print("I pushed a transaction")
     return "0"
             
 
