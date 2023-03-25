@@ -182,7 +182,7 @@ class Node:
 	def broadcast_block(self):
 		res = self.currentBlock
 		self.chain.add_block(self.currentBlock)
-		self.wallet.utxos = self.wallet.chain_utxos.copy()
+		self.wallet.chain_utxos = self.wallet.utxos.copy()
 		self.chain_ring = self.ring.copy()
 		self.create_new_block()
 		return res
