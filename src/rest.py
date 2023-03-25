@@ -27,7 +27,15 @@ q = []
 def queue_function():
     while True:
         if len(q) == 0: continue
-        if p == None or not p.is_alive():
+        if p == None: 
+            if len(me.currentBlock.listOfTransactions) == block.capacity:
+                p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                p.start()
+            if len(me.currentBlock.listOfTransactions) < block.capacity:
+                t = q.pop(0)
+                if me.receive(t): me.add_transaction_to_block(t)
+        elif p.is_alive(): continue
+        else:
             if len(me.currentBlock.listOfTransactions) == block.capacity:
                 p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                 p.start()
