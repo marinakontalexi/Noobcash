@@ -66,7 +66,7 @@ def mine_function(event):
         if x == me.wallet.address: continue 
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
 
-def cli_function(p):
+def cli_function():
     time.sleep(10)
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
     time.sleep(10)    
