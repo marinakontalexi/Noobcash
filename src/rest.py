@@ -29,17 +29,25 @@ chain = blockchain.Blockchain()
 def queue_function(qevent):
     print(colored("Buffer is active",color_buffer))
     p = None
-    s = time.time()
+    l = s = time.time()
+    m = time.time()
     while True:
-        if time.time() - s > 3:
+        if time.time() - s > 5:
             print(colored("Length of queue " + str(len(q)), color_buffer))
             s = time.time()
         if qevent.is_set():
             print(colored("Buffer exits",color_buffer))
             return
         if len(q) == 0: continue
-        if p != None and p.is_alive(): continue
+        if p != None and p.is_alive(): 
+            if time.time() - l > 3:
+                print(colored("p is alive", color_buffer))
+                l = time.time()
+            continue
         if p == None or p != None and not p.is_alive():
+            if time.time() - m > 3:
+                print(colored("p is not alive", color_buffer))
+                m = time.time()
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print(colored("p is None and block is not full", color_buffer))
                 t = q.pop(0)
