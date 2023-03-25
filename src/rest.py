@@ -41,12 +41,12 @@ def queue_function(qevent):
             return
         if len(q) == 0: continue
         if p != None and p.is_alive(): 
-            if time.time() - l > 3:
+            if time.time() - l > 10:
                 print(colored("p is alive", color_time))
                 l = time.time()
             continue
         if p == None or p != None and not p.is_alive():
-            if time.time() - m > 3:
+            if time.time() - m > 10:
                 print(colored("p is not alive", color_time))
                 m = time.time()
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
@@ -83,17 +83,20 @@ def cli_function():
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
+    log == 0
     while s != "":
+        if log == 10:
+            print(colored("I posted ", log, " transactions", color_cli))
+            break
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: 
             s = f.readline()
             continue
-        
         print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        print(colored("Post request finished", "magenta"))
-        time.sleep(60)
+        log += 1
+        time.sleep(15)
         s = f.readline()
 
     print("Time", time.time() - t)
