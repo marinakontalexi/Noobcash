@@ -23,11 +23,13 @@ app = Flask(__name__)
 chain = blockchain.Blockchain()
 
 def queue_function(qevent):
+    print("Buffer is active")
     p = None
     while True:
         if qevent.is_set():
             return
         if len(q) == 0: continue
+        if p.is_alive(): continue
         if p == None:
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print("p is None and block is not full")
@@ -40,7 +42,7 @@ def queue_function(qevent):
                     print("p is None and block is full")
                     p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                     p.start()  
-        elif p.is_alive(): continue
+        
         else:
             if len(me.currentBlock.listOfTransactions) < block.capacity:                
                 print("p is not alive and block is not full")
@@ -62,9 +64,10 @@ def mine_function(event):
             event.clear()
             return
     print("mine ok")
+    newblock = me.broadcast_block()
     for x in me.ring:
         if x == me.wallet.address: continue 
-        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
+        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))
 
 def cli_function():
     time.sleep(10)
@@ -80,6 +83,7 @@ def cli_function():
         rcv = r[2:]
         if int(rcv) >= total: continue
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
+        print("Transaction was posted")
         time.sleep(10)
         s = f.readline()
     print("Time", time.time() - t)
