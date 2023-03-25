@@ -215,10 +215,12 @@ def get_transaction():
         x.print_trans()
     print("UTXOS")
     for x in me.wallet.utxos:
-        me.wallet.utxos[x].print_trans()
+        for y in me.wallet.utxos[x]:
+            y.print_trans()
     print("CHAIN UTXOS")
     for x in me.wallet.chain_utxos:
-        me.wallet.chain_utxos[x].print_trans()
+        for y in me.wallet.chain_utxos[x]:
+            y.print_trans()
     q.append(t)
     print("I pushed a transaction")
     return "0"
