@@ -22,28 +22,43 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
-def queue_function(p):
+def queue_function(p, qevent):
     while True:
+        if qevent.is_set():
+            return
         if len(q) == 0: continue
         if p == None: 
-            if len(me.currentBlock.listOfTransactions) == block.capacity:
+            if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                print("p is None and block is full")
                 p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                 p.start()
-            if len(me.currentBlock.listOfTransactions) < block.capacity:
+            if len(me.currentBlock.listOfTransactions) < block.capacity:                
+                print("p is None and block is not full")
                 t = q.pop(0)
-                if me.receive(t): me.add_transaction_to_block(t)
+                if me.receive(t):                
+                    print("t was received") 
+                    me.add_transaction_to_block(t)
+                    print("t was added to block") 
         elif p.is_alive(): continue
         else:
-            if len(me.currentBlock.listOfTransactions) == block.capacity:
+            if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                print("p is not alive and block is full")
                 p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                 p.start()
-            if len(me.currentBlock.listOfTransactions) < block.capacity:
+            if len(me.currentBlock.listOfTransactions) < block.capacity:                
+                print("p is not alive and block is not full")
                 t = q.pop(0)
-                if me.receive(t): me.add_transaction_to_block(t)
+                if me.receive(t):                
+                    print("t was received") 
+                    me.add_transaction_to_block(t)
+                    print("t was added to block") 
 
 def mine_function(event):
+    print("I start mining")
     while not me.mine_block():
         if event.is_set():
+            print("I stop mining")
+            event.clear()
             return
     print("mine ok")
     for x in me.ring:
@@ -54,7 +69,7 @@ def cli_function(p):
     time.sleep(10)
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
     time.sleep(10)    
-    queue = threading.Thread(target = queue_function, args=(p,), daemon=True)
+    queue = threading.Thread(target = queue_function, args=(p,qevent), daemon=True)
     queue.start()
     time.sleep(20)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
@@ -204,6 +219,7 @@ def print_utxos():
 @app.route('/newblock/', methods=['POST'])
 def get_block():
     print("BLOCK RECEIVED\n")
+    qevent.set()
     blc_rcv.set()
     d = request.data
     b = jsonpickle.decode(d)  
@@ -212,7 +228,9 @@ def get_block():
             if x == me.wallet.address: continue
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
-        blc_rcv.clear()
+        qevent.clear()
+        queue = threading.Thread(target = queue_function, args=(p,qevent), daemon=True)
+        queue.start()
     return "0"
 
 @app.route('/send_chain/', methods=['POST'])
@@ -227,7 +245,9 @@ def resolve():
     d = request.data
     (c, u, r) = jsonpickle.decode(d)
     me.choose_chain(c, u, r)
-    blc_rcv.clear()
+    qevent.clear()
+    queue = threading.Thread(target = queue_function, args=(p,qevent), daemon=True)
+    queue.start()
     return "0"
 
 if __name__ == '__main__':
@@ -242,8 +262,9 @@ if __name__ == '__main__':
 
     p = None
     blc_rcv = threading.Event()
+    qevent = threading.Event()
     q = []
-    cli = threading.Thread(target = cli_function, args=(p,), daemon=True)
+    cli = threading.Thread(target = cli_function, args=(p), daemon=True)
     cli.start()
 
     app.run(host=ip, port=port)
