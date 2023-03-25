@@ -231,7 +231,7 @@ def get_block():
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
         qevent.clear()
-        queue = threading.Thread(target = queue_function, args=(qevent), daemon=True)
+        queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
         queue.start()
     return "0"
 
