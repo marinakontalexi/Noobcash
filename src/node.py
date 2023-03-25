@@ -161,9 +161,6 @@ class Node:
 	
 	def add_transaction_to_block(self, T):
 		self.currentBlock.add_transaction(T)
-		if len(self.currentBlock.listOfTransactions) == block.capacity:
-			return True
-		return False
 
 	def get_initial_blockchain(self, chain):
 		# safecurrent = self.currentBlock.copy()
