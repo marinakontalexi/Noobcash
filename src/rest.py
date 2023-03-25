@@ -22,7 +22,7 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
-def queue_function():
+def queue_function(p):
     while True:
         if len(q) == 0: continue
         if p == None: 
@@ -50,11 +50,11 @@ def mine_function(event):
         if x == me.wallet.address: continue 
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
 
-def cli_function(name):
+def cli_function(p):
     time.sleep(10)
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
     time.sleep(10)    
-    queue = threading.Thread(target = queue_function, args=(), daemon=True)
+    queue = threading.Thread(target = queue_function, args=(p,), daemon=True)
     queue.start()
     time.sleep(20)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
@@ -239,11 +239,11 @@ if __name__ == '__main__':
     port = args.port
 
     me = node.Node(ip + my_port)
-    
+
     p = None
     blc_rcv = threading.Event()
     q = []
-    cli = threading.Thread(target = cli_function, args=(1,), daemon=True)
+    cli = threading.Thread(target = cli_function, args=(p,), daemon=True)
     cli.start()
 
     app.run(host=ip, port=port)
