@@ -56,7 +56,7 @@ def queue_function(qevent):
                     print(colored("t was received", color_buffer)) 
                     me.add_transaction_to_block(t)
                     print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
-                    if len(me.currentBlock.listOfTransactions) == block.capacity
+                    if len(me.currentBlock.listOfTransactions) == block.capacity:
                         p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
                         p.start()
 
