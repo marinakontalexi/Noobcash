@@ -83,7 +83,7 @@ def cli_function():
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
-    log == 0
+    log = 0
     while s != "":
         if log == 10:
             print(colored("I posted ", log, " transactions", color_cli))
