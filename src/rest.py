@@ -210,17 +210,17 @@ def get_transaction():
     print("TRANSACTION RECEIVED")
     d = request.data
     t = jsonpickle.decode(d)
-    print("Inputs:")
-    for x in t.transaction_inputs: 
-        x.print_trans()
-    print("UTXOS")
-    for x in me.wallet.utxos:
-        for y in me.wallet.utxos[x]:
-            y.print_trans()
-    print("CHAIN UTXOS")
-    for x in me.wallet.chain_utxos:
-        for y in me.wallet.chain_utxos[x]:
-            y.print_trans()
+    # print("Inputs:")
+    # for x in t.transaction_inputs: 
+    #     x.print_trans()
+    # print("UTXOS")
+    # for x in me.wallet.utxos:
+    #     for y in me.wallet.utxos[x]:
+    #         y.print_trans()
+    # print("CHAIN UTXOS")
+    # for x in me.wallet.chain_utxos:
+    #     for y in me.wallet.chain_utxos[x]:
+    #         y.print_trans()
     q.append(t)
     print("I pushed a transaction")
     return "0"
