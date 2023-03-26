@@ -96,7 +96,7 @@ def cli_function():
         print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         log += 1
-        sleep = randint(10, 15)
+        sleep = randint(1, 3)
         time.sleep(sleep)
         s = f.readline()
 
