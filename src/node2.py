@@ -4,7 +4,7 @@ import wallet2
 import transaction2
 from Crypto.Random import random
 import requests
-import time
+from termcolor import colored
 
 class Node:
 
@@ -59,7 +59,7 @@ class Node:
 		if self.validate_transaction(T):
 			print("Transaction is valid\n")
 			return True
-		print("Error: Transaction not valid\n")	
+		print(colored("Error: Transaction not valid\n", "red"))	
 		return False
 
 	def validate_transaction(self, T):
