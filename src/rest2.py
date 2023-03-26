@@ -170,6 +170,7 @@ def register():
         me.chain = chain.copy()
         me.chain.init_utxos = me.wallet.utxos.copy()
         for x in me.ring:
+            addresses[x] = me.ring[x][0]
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, me.chain)))
         for x in me.ring:
