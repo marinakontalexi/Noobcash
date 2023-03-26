@@ -130,8 +130,6 @@ def relogin():
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
     for x in ring:
-        print(x)
-        print(type(x))
         addresses[x] = ring[x][0]
         me.ring[x] = []
         for i in range(3):
