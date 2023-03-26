@@ -11,6 +11,7 @@ import jsonpickle
 import time
 from random import randint
 from termcolor import colored
+from numpy import average
 
 master_node = '10.0.0.1'
 master_port = ":5000"
@@ -21,7 +22,6 @@ color_cli = "light_magenta"
 color_buffer = "green"
 color_miner = "light_blue"
 color_time = "dark_grey"
-start_time = 0
 
 # ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 ip = socket.gethostbyname(socket.gethostname())
@@ -272,21 +272,24 @@ def resolve():
 
 @app.route('/throughput/', methods=['POST'])
 def get_time():
-    start_time = jsonpickle.decode(request.data)
+    me.start_time = jsonpickle.decode(request.data)
     return "0"
 
 @app.route('/throughput/', methods=['GET'])
 def find_throughput():
-    if start_time == 0: print("Something went wrong")
+    if me.start_time == 0: print("Something went wrong")
     t = time.time()
     numOfTrans = (len(me.chain.listOfBlocks)-1)*block.capacity - total + 1
     res = {}
     res["Valid Transactions"] = numOfTrans
     res["Total Transactions"] = total*100
-    res["Total Time:"] = t - start_time
-    res["Throughput"] = (t - start_time) / numOfTrans
+    res["Total Time:"] = t - me.start_time
+    res["Throughput"] = (t - me.start_time) / numOfTrans
     return res
 
+@app.route('/avg/', methods=['GET'])
+def show_average():
+    return {"Average Block Time" : average(me.avg)}
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -300,7 +303,7 @@ if __name__ == '__main__':
     my_port = ":" + str(port)
 
     me = node2.Node(ip + my_port)
-
+    
     queue = None
     stop = threading.Event()
     die = threading.Event()

@@ -6,6 +6,7 @@ from Crypto.Random import random
 import requests
 from termcolor import colored
 import rest2
+import time
 
 class Node:
 
@@ -16,6 +17,9 @@ class Node:
 		self.ring = {self.wallet.address : [0, ip, self.NBC]} # here we store information for every node, as its id, its address (ip:port) its public key and its balance
 		self.currentBlock = None
 		self.chain = None
+		self.start_time = 0
+		self.avg = []
+		self.t = time.time()
 		
 	# node functions
 
@@ -127,6 +131,7 @@ class Node:
 			return
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
+		t = time.time()
 		return
 	
 	def validate_chain(self, chain):
@@ -148,7 +153,12 @@ class Node:
 
 	def broadcast_block(self):								# add block to chain, update utxos for each transaction in block
 		res = self.currentBlock
+		if len(res.listOfTransactions) == 0: return res
 		self.chain.add_block(self.currentBlock)
+
+		self.avg.append(time.time() - t)
+		t = time.time()
+
 		for t in res.listOfTransactions:
 			sender = str(t.sender_address)
 			for t_in in t.transaction_inputs:
@@ -163,6 +173,7 @@ class Node:
 		return hash[0:blockchain.MINING_DIFFICULTY] == "0"*blockchain.MINING_DIFFICULTY
 
 	def receive_block(self, B):
+		if len(B.listOfTransactions) == 0: return False
 		if self.validate_block(B):
 			print("Block is valid! :)")
 			self.currentBlock = B.copy()
@@ -238,6 +249,8 @@ class Node:
 				self.ring[sender][2] += t.amount
 				self.ring[receiver][2] -= t.amount
 			self.currentBlock = block.Block(chain.lasthash)
+			self.avg.append(time.time() - t)
+			t = time.time()
 			return False
 		return True
 		
