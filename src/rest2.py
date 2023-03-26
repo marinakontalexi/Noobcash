@@ -9,6 +9,7 @@ import netifaces as ni
 import socket
 import jsonpickle
 import time
+from random import randint
 from termcolor import colored
 
 master_node = '10.0.0.1'
@@ -95,7 +96,8 @@ def cli_function():
         print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         log += 1
-        time.sleep(1)
+        sleep = randint(10, 15)
+        time.sleep(sleep)
         s = f.readline()
 
     print("Time", time.time() - t)
