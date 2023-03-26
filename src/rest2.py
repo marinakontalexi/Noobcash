@@ -283,7 +283,7 @@ def find_throughput():
     res = {}
     res["Valid Transactions"] = numOfTrans
     res["Total Transactions"] = total*100
-    res["Total Time:"] = t - me.start_time
+    res["Total Time"] = t - me.start_time
     res["Throughput"] = (t - me.start_time) / numOfTrans
     return res
 
