@@ -72,7 +72,7 @@ def cli_function(me):
         time.sleep(5) 
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
-    time.sleep(90)          # wait until you start making t from file
+    time.sleep(100)          # wait until you start making t from file
     while(me.ring[me.wallet.address][2] < 100): continue
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
@@ -174,7 +174,10 @@ def register():
 def show_ring():
     acc = {}
     for x in me.ring:
-        acc[me.ring[x][0]] = [me.ring[x][1], me.ring[x][2]]
+        d = {}
+        d["IP Address"] = me.ring[x][1]
+        d["Balance"] = me.ring[x][2]
+        acc[me.ring[x][0]] = d
     return acc
 
 @app.route('/current/', methods=['GET'])
@@ -270,6 +273,7 @@ def resolve():
 @app.route('/throughput/', methods=['POST'])
 def get_time():
     start_time = jsonpickle.decode(request.data)
+    return "0"
 
 @app.route('/throughput/', methods=['GET'])
 def find_throughput():
