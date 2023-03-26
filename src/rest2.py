@@ -27,6 +27,7 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 addresses = {}
+addresses[str(b'0')] = "GOD"
 
 def queue_function(qevent):
     print(colored("Buffer is active",color_buffer))
