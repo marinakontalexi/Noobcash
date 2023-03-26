@@ -248,14 +248,14 @@ def get_block():
 def send_chain():
     IP = request.data
     requests.post("http://" + IP.decode() + '/resolve/', 
-                    data = jsonpickle.encode((me.chain, me.wallet.utxos, me.ring)))
+                    data = jsonpickle.encode((me.chain, me.currentBlock, me.wallet.utxos, me.ring)))     
     return "0"
 
 @app.route('/resolve/', methods=['POST'])
 def resolve():
     d = request.data
-    (c, u, r) = jsonpickle.decode(d)
-    me.choose_chain(c, u, r)
+    (c, b, u, r) = jsonpickle.decode(d)
+    me.choose_chain(c, b, u, r)
     qevent.clear() 
     blc_rcv.clear()
     queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
