@@ -202,15 +202,14 @@ class Node:
 			self.ring[sender][2] += t.amount
 			self.ring[receiver][2] -= t.amount
 
-		for i in range(len(B.listOfTransactions)):
-			t = B.listOfTransactions[i]
-			if not self.validate_transaction(t):		# attention: this function changes self.wallet.utxos
-				self.wallet.utxos = safeutxos.copy()
-				self.ring = safering.copy()
-				print("Error: Transaction ", i, " was invalid!\n")
-				return False
-			
-		return True
+			for i in range(len(B.listOfTransactions)):
+				t = B.listOfTransactions[i]
+				if not self.validate_transaction(t):		# attention: this function changes self.wallet.utxos
+					self.wallet.utxos = safeutxos.copy()
+					self.ring = safering.copy()
+					print("Error: Transaction ", i, " was invalid!\n")
+					return False
+			return True
 
 	def choose_chain(self, chain, utxos, ring):
 		if chain.length >= self.chain.length:
