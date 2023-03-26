@@ -5,10 +5,10 @@ git pull
 echo "Succesfully fetched data"
 
 echo "Copying to Client 2"
-scp -rp /home/user/Douments/Noobcash client2:/home/user/Documents
+scp -rp /home/user/Documents/Noobcash client2:/home/user/Documents
 echo "Copying to Client 3"
-scp -rp /home/user/Douments/Noobcash client3:/home/user/Documents
+scp -rp /home/user/Documents/Noobcash client3:/home/user/Documents
 echo "Copying to Client 4"
-scp -rp /home/user/Douments/Noobcash client4:/home/user/Documents
+scp -rp /home/user/Documents/Noobcash client4:/home/user/Documents
 echo "Copying to Client 5"
-scp -rp /home/user/Douments/Noobcash client5:/home/user/Documents
+scp -rp /home/user/Documents/Noobcash client5:/home/user/Documents
