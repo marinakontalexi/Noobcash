@@ -67,7 +67,7 @@ def cli_function(me):
     if ip != master_node:   
         time.sleep(15)
         requests.get("http://" + ip  + my_port + "/login/")
-        sleep(5) 
+        time.sleep(5) 
     if ip == master_node: 
         while me.current_id_count < total: continue
         time.sleep(15)
