@@ -1,6 +1,7 @@
 echo "Fetching from git to client1"
-sudo rm -r ntua-distributed-systems
-git clone https://github.com/marinakontalexi/Noobcash
+# sudo rm -r ntua-distributed-systems
+# git clone https://github.com/marinakontalexi/Noobcash
+git pull
 echo "Succesfully fetched data"
 
 echo "Copying to Client 2"
