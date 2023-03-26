@@ -237,6 +237,7 @@ def get_block():
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
         qevent.clear()
+        blc_rcv.clear()
         queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
         queue.start()
     return "0"
@@ -253,7 +254,8 @@ def resolve():
     d = request.data
     (c, u, r) = jsonpickle.decode(d)
     me.choose_chain(c, u, r)
-    qevent.clear()
+    qevent.clear() 
+    blc_rcv.clear()
     queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
     return "0"
