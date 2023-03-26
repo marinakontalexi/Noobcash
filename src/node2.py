@@ -187,10 +187,8 @@ class Node:
 			receiver = t.receiver_address
 			for t_in in t.transaction_inputs:
 				for x in self.wallet.utxos[sender]:
-					print(x.equal(t_in))
 					if x.equal(t_in): 
 						setattr(x, 'available', True)
-						print(x.print_trans())
 						break
 			for t_out in t.transaction_outputs:
 				for x in self.wallet.utxos[t_out.address]:
