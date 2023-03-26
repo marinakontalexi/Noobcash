@@ -5,6 +5,7 @@ import transaction2
 from Crypto.Random import random
 import requests
 from termcolor import colored
+import rest2
 
 class Node:
 
@@ -212,7 +213,7 @@ class Node:
 		return True
 
 	def choose_chain(self, chain, curr, utxos, ring):							# undo current block
-		if chain.length >= self.chain.length:
+		if chain.length > self.chain.length:
 			self.chain = chain.copy()
 			self.currentBlock = curr
 			for x in ring:
@@ -239,23 +240,24 @@ class Node:
 			self.ring[sender][2] += t.amount
 			self.ring[receiver][2] -= t.amount
 			self.currentBlock = block.Block(chain.lasthash)
-		return
+			return False
+		return True
 		
 	def balance():
-		url = 'http://' + rest.ip + rest.my_port + '/balance/'
+		url = 'http://' + rest2.ip + rest2.my_port + '/balance/'
 		response = requests.get(url)
 		print('Your balance is :', response.text)
 		return response
 	
 	def view():
-		url = 'http://' + rest.ip + rest.my_port + '/view'
+		url = 'http://' + rest2.ip + rest2.my_port + '/view'
 		response = requests.get(url)
 		re = response.json()
 		print('List of transaction of last block of blockchain')
 		print(re['listOfTransactions'])
 
 	def sendTransCli(id, amount):
-		url = 'http://' + rest.ip + rest.my_port + '/t?to='+ str(id) + '&amount=' + str(amount)
+		url = 'http://' + rest2.ip + rest2.my_port + '/t?to='+ str(id) + '&amount=' + str(amount)
 		# print(url)
 		response = requests.get(url)
 		if(response.status_code == 200):

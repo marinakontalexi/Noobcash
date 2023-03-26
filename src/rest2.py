@@ -28,56 +28,45 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
-def queue_function(qevent):
+def queue_function(stop_event, die_event):
     print(colored("Buffer is active",color_buffer))
-    p = None
     l = s = time.time()
-    m = time.time()
     while True:
         if time.time() - s > 5:
             print(colored("Length of queue " + str(len(q)), color_time))
             s = time.time()
-        if qevent.is_set():
+        if die_event.is_set():
             print(colored("Buffer exits",color_buffer))
             return
         if len(q) == 0: continue
-        if p != None and p.is_alive(): 
-            if time.time() - l > 10:
-                print(colored("p is alive", color_time))
-                l = time.time()
-            continue
-        if p == None or p != None and not p.is_alive():
-            if time.time() - m > 10:
-                print(colored("p is not alive", color_time))
-                m = time.time()
-            if len(me.currentBlock.listOfTransactions) < block.capacity:                
-                print(colored("p is None and block is not full", color_buffer))   
-                t = q.pop(0)  
-                if me.receive(t):         
-                    me.add_transaction_to_block(t)
-                    print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
-                if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                    print(colored("p is None and block is full", color_buffer))
-                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                    p.start()  
-
-def mine_function(event):
-    print(colored("mining starts", color_miner))
-    while not me.mine_block():
-        if event.is_set():
-            print(colored("I stop mining", color_miner))
-            event.clear()
-            return
-    print(colored("mine ok", color_miner))
-    newblock = me.broadcast_block()
-    for x in me.ring:
-        if x == me.wallet.address: continue 
-        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))
+        if len(me.currentBlock.listOfTransactions) < block.capacity:                
+            print(colored("Block is not full", color_buffer))   
+            t = q.pop(0)  
+            if me.receive(t):         
+                me.add_transaction_to_block(t)
+                print(colored("T was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
+            if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                print(colored("Block is full!", color_buffer))
+                print(colored("Mining starts...", color_miner))
+                while not me.mine_block():
+                    if time.time() - l > 10:
+                        print(colored("mining...", color_time))
+                        l = time.time()
+                    if stop_event.is_set(): print(colored("I stop mining", color_miner))
+                    while stop_event.is_set():
+                        if die_event.is_set(): 
+                            print(colored("Buffer exits",color_buffer))
+                            return
+                print(colored("mine ok", color_miner))
+                newblock = me.broadcast_block()
+                for x in me.ring:
+                    if x == me.wallet.address: continue 
+                    requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))  
 
 def cli_function():
     time.sleep(15)
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")   
-    queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
+    queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     time.sleep(5)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
@@ -98,6 +87,7 @@ def cli_function():
         s = f.readline()
     print(colored("I posted " + str(log) + " transactions", color_cli))
     print("Time", time.time() - t)
+    if queue.is_alive(): queue.join()
     # kill queue
 #.......................................................................................
 
@@ -226,8 +216,7 @@ def print_utxos():
 @app.route('/newblock/', methods=['POST'])
 def get_block():
     print("BLOCK RECEIVED")
-    qevent.set()
-    blc_rcv.set()
+    stop.set()
     d = request.data
     b = jsonpickle.decode(d)  
     if not me.receive_block(b):    # diakladwsi
@@ -235,9 +224,10 @@ def get_block():
             if x == me.wallet.address: continue
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
-        qevent.clear()
-        blc_rcv.clear()
-        queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
+        die.set()
+        if not queue.is_alive(): die.clear()
+        stop.clear() 
+        queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
         queue.start()
     return "0"
 
@@ -252,10 +242,13 @@ def send_chain():
 def resolve():
     d = request.data
     (c, b, u, r) = jsonpickle.decode(d)
-    me.choose_chain(c, b, u, r)
-    qevent.clear() 
-    blc_rcv.clear()
-    queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
+    if me.choose_chain(c, b, u, r): 
+        stop.clear()
+        return "1"
+    die.set()
+    if not queue.is_alive(): die.clear()
+    stop.clear()
+    queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     return "0"
 
@@ -269,8 +262,8 @@ if __name__ == '__main__':
 
     me = node2.Node(ip + my_port)
 
-    blc_rcv = threading.Event()
-    qevent = threading.Event()
+    stop = threading.Event()
+    die = threading.Event()
     q = []
     cli = threading.Thread(target = cli_function, args=(), daemon=True)
     cli.start()
