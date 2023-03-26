@@ -182,9 +182,11 @@ class Node:
 			return False
 		
 		for t in self.currentBlock.listOfTransactions:		# undo my transactions
+			print("undoing ", t.print_trans())
 			sender = str(t.sender_address)
 			receiver = t.receiver_address
 			for t_in in t.transaction_inputs:
+				print("should undo:", t_in.print_trans())
 				for x in self.wallet.utxos[sender]:
 					if x.equal(t_in): 
 						print(x.print_trans())
