@@ -62,12 +62,9 @@ class Transaction:
         return signer.sign(self.hash())
     
     def print_trans(self):
-        # print("SIZE3", len(rest2.addresses))
-        # for x in rest2.addresses:
-        #     print(type(x))
-        #     print(rest2.addresses[str(x)])
-        #     print(x == str(self.sender_address), x == self.receiver_address)
-        return "TRANSACTION " + str(addresses[str(self.sender_address)]) + " -> " + str(addresses[self.receiver_address]) + ' ' + str(self.amount)
+        acc = "TRANSACTION " + str(addresses[str(self.sender_address)]) + " -> " + str(addresses[self.receiver_address]) + ' ' + str(self.amount)
+        print("trans returns: ", type(acc))
+        return acc
     
     def verify_signature(self):
         pk = RSA.import_key(self.sender_address)
