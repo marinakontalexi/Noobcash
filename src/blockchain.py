@@ -1,4 +1,4 @@
-MINING_DIFFICULTY = 3
+MINING_DIFFICULTY = 4
 
 class Blockchain:
     def __init__(self):
