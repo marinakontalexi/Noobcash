@@ -1,5 +1,5 @@
 import sys
-import node
+import node2
 
 
 # case of asynchronous termination
@@ -16,16 +16,16 @@ while (1):
     action = input()
     print("\n")
     if(action == 'balance'):
-        node.Node.balance()
+        node2.Node.balance()
 
     elif(action == 'view'):
-        node.Node.view()
+        node2.Node.view()
 
     elif(action[0] == 't'):
         inputs = action.split()
         id = inputs[1] 
         amount = inputs[2]
-        node.Node.sendTransCli(id, amount)
+        node2.Node.sendTransCli(id, amount)
 
     elif(action == 'exit'):
         print('Exiting...')
