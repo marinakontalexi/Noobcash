@@ -221,7 +221,7 @@ def print_utxos():
         acc2 = {}
         for i in range(len(me.wallet.utxos[x])):
             acc2["UTXO" + str(i)] = me.wallet.utxos[x][i].print_trans()
-        acc[x] = acc2
+        acc[transaction2.addresses[x]] = acc2
     return acc
 
 @app.route('/newblock/', methods=['POST'])
