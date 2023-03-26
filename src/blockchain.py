@@ -21,6 +21,7 @@ class Blockchain:
         return b
 
     def print(self):
+        acc = ""
         for i in range(len(self.listOfBlocks)):
-            print ("Block ", i)
-            self.listOfBlocks[i].print()
+            acc = acc + "Block " + str(i) + '\n' + self.listOfBlocks[i].print() + '\n'
+        return acc

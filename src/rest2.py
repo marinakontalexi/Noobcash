@@ -226,8 +226,7 @@ def get_balance():
 
 @app.route('/blockchain/', methods=['GET'])
 def print_blockchain():
-    me.chain.print()
-    return "Check stdout"
+    return me.chain.print()
 
 @app.route('/utxos/', methods=['GET'])
 def print_utxos():

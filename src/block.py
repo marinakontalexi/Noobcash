@@ -25,9 +25,7 @@ class Block:
         return b
 
     def print(self):
-        print("Previous Hash:", self.previousHash)
-        print("My Hash: ", self.myhash)
-        print("Nonce: ", self.nonce)
+        acc = "Previous Hash: " + self.previousHash + '\n' + "My Hash: " +  self.myhash + '\n' +  "Nonce: ", str(self.nonce) + '\n'
         for x in self.listOfTransactions:
-            x.print_trans()
-        print("")
+            acc = acc + x.print_trans()
+        return acc
