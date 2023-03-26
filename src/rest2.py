@@ -70,7 +70,7 @@ def cli_function():
     if ip == master_node: time.sleep(20)
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
-    time.sleep(15)
+    while(me.balance < 100): continue
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
