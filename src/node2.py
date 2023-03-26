@@ -36,7 +36,6 @@ class Node:
 		s = 0 
 		receiver_address = -1
 		transactionInputs = []
-		safeutxos = self.wallet.utxos.copy()
 		for x in self.ring:
 			if self.ring[x][0] == receiver: 
 				receiver_address = x
@@ -44,16 +43,15 @@ class Node:
 		if receiver_address == -1: 
 			print("Wrong receiver address")
 			return None
-		for t in safeutxos[self.wallet.address]:
+		for t in self.wallet.utxos[self.wallet.address]:
 			if not t.available: continue
 			if s >= amount: break
 			# setattr(t, 'available', False)
-			transactionInputs.append(t)
+			transactionInputs.append(t.copy())
 			s += t.amount
 		if s < amount: 
 			print("Not enough NBCs")
 			return None
-		self.wallet.utxos = safeutxos.copy()
 		return transaction2.Transaction(self.wallet.public_key, receiver_address, amount, self.wallet.private_key, transactionInputs)
 		
 	def receive(self, T):

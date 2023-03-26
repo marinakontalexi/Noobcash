@@ -188,8 +188,11 @@ def make_transaction():
     args = request.args
     receiver = int(args.get('to'))
     amount = int(args.get('amount'))
-    t = me.create_transaction(receiver, amount)
-    if t == None: return "1"
+    for i in range(3):
+        t = me.create_transaction(receiver, amount)
+        if t != None: break
+    if t == None: 
+        return "Invalid transaction"
     for x in me.ring:
         requests.post("http://" + me.ring[x][1] + '/broadcast/', data = jsonpickle.encode(t))
     return t.print_trans()
