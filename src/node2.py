@@ -4,7 +4,6 @@ import wallet2
 import transaction2
 from Crypto.Random import random
 import requests
-import rest
 
 class Node:
 
@@ -16,7 +15,6 @@ class Node:
 		self.currentBlock = None
 		self.chain = None
 		
-
 	# node functions
 
 	def create_wallet(self):
