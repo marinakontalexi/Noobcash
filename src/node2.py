@@ -59,7 +59,8 @@ class Node:
 		if self.validate_transaction(T):
 			print("Transaction is valid\n")
 			return True
-		print(colored("Error: Transaction not valid\n", "red"))	
+		print(colored("Error: Transaction not valid. " + str(T.sender_address == self.wallet.address), "red"))	
+		print(self.wallet.address, T.sender_address)
 		return False
 
 	def validate_transaction(self, T):
