@@ -75,11 +75,11 @@ def mine_function(event):
         requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))
 
 def cli_function():
-    time.sleep(10)
+    time.sleep(15)
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")   
     queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
-    time.sleep(10)
+    time.sleep(5)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
