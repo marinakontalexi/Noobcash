@@ -182,7 +182,9 @@ def show_current_block():
 
 @app.route('/t', methods=['GET'])
 def make_transaction():
-    print(request.remote_addr == ip) 
+    if request.remote_addr != ip: 
+        print("You cannot make a transaction for someone else!")
+        return "1" 
     args = request.args
     receiver = int(args.get('to'))
     amount = int(args.get('amount'))
@@ -190,7 +192,7 @@ def make_transaction():
     if t == None: return "1"
     for x in me.ring:
         requests.post("http://" + me.ring[x][1] + '/broadcast/', data = jsonpickle.encode(t))
-    return "0"
+    return t.print_trans()
 
 @app.route('/broadcast/', methods=['POST'])
 def get_transaction():
