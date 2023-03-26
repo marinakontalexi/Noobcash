@@ -207,7 +207,7 @@ class Node:
 		return True
 
 	def choose_chain(self, chain, utxos, ring):
-		if chain.length > self.chain.length:
+		if chain.length >= self.chain.length:
 			self.chain = chain.copy()
 			self.currentBlock = block.Block(chain.lasthash)
 			for x in ring:

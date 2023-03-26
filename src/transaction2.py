@@ -18,7 +18,7 @@ class TransactionIO:
         # self.id = self.hash().hexdigest()
     
     def print_trans(self):
-        print("TransactionIO ", addresses[self.address], ": ", self.amount)
+        return str(addresses[str(self.address)]) + " : " + str(self.amount) + ' ' + str(self.available)
     
     def equal(self, T):
         return self.hash().digest() == T.hash().digest()

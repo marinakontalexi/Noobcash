@@ -181,12 +181,9 @@ def show_ring():
         acc[me.ring[x][0]] = [me.ring[x][1], me.ring[x][2]]
     return jsonpickle.encode(acc)
 
-# @app.route('/chain_ring/', methods=['GET'])
-# def show_chain_ring():
-#     acc = {-1 : ["address", "balance"]}
-#     for x in me.chain_ring:
-#         acc[me.chain_ring[x][0]] = [me.chain_ring[x][1], me.chain_ring[x][2]]
-#     return jsonpickle.encode(acc)
+@app.route('/current/', methods=['GET'])
+def show_current_block():
+    return me.currentBlock.print()
 
 @app.route('/t', methods=['GET'])
 def make_transaction():
@@ -204,13 +201,6 @@ def get_transaction():
     print("TRANSACTION RECEIVED")
     d = request.data
     t = jsonpickle.decode(d)
-    # print("Inputs:")
-    # for x in t.transaction_inputs: 
-    #     x.print_trans()
-    # print("UTXOS")
-    # for x in me.wallet.utxos:
-    #     for y in me.wallet.utxos[x]:
-    #         y.print_trans()
     q.append(t)
     print("I pushed a transaction")
     return "0"
@@ -226,10 +216,13 @@ def print_blockchain():
 
 @app.route('/utxos/', methods=['GET'])
 def print_utxos():
+    acc = {}
     for x in me.wallet.utxos:
-        for y in me.wallet.utxos[x]:
-            y.print_trans()
-    return "Check stdout"
+        acc2 = {}
+        for i in range(len(me.wallet.utxos[x])):
+            acc2["UTXO" + str(i)] = me.wallet.utxos[x][i].print_trans()
+        acc[x] = acc2
+    return acc
 
 @app.route('/newblock/', methods=['POST'])
 def get_block():
