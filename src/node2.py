@@ -185,6 +185,7 @@ class Node:
 			print("undoing ", t.print_trans())
 			sender = str(t.sender_address)
 			receiver = t.receiver_address
+			time.sleep(15)
 			for t_in in t.transaction_inputs:
 				print("should undo:", t_in.print_trans())
 				for x in self.wallet.utxos[sender]:
