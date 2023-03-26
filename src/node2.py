@@ -164,17 +164,8 @@ class Node:
 	def receive_block(self, B):
 		if self.validate_block(B):
 			print("Block is valid! :)")
-			self.chain.add_block(B.copy())
-			# for t in B.listOfTransactions:
-			# 	sender = str(t.sender_address)
-			# 	for t_in in t.transaction_inputs:
-			# 		print("should remove: ", t_in.print_trans())
-			# 		for x in self.wallet.utxos[sender]:
-			# 			if x.equal(t_in): 
-			# 				print("removing: ", x.print_trans())
-			# 				self.wallet.utxos[sender].remove(x)
-			# 				break
-			self.currentBlock = block.Block(B.myhash)
+			self.currentBlock = B.copy()
+			b = self.broadcast_block()
 			return True
 		print("Warning: Block not valid!")
 		return False
