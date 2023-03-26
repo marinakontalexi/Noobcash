@@ -5,6 +5,9 @@ from Crypto.PublicKey import RSA
 import jsonpickle
 import rest2
 
+addresses = {}
+addresses[str(b'0')] = "GOD"
+
 class TransactionIO:
 
     def __init__(self, transaction_id, address, amount):

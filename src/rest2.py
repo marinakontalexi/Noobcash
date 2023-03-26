@@ -27,7 +27,6 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
-
 def queue_function(qevent):
     print(colored("Buffer is active",color_buffer))
     p = None
@@ -125,14 +124,14 @@ def relogin():
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
     for x in ring:
-        addresses[x] = str(ring[x][0])
+        transaction2.addresses[x] = str(ring[x][0])
         me.ring[x] = []
         for i in range(3):
             me.ring[x].append(ring[x][i])
         me.wallet.utxos[x] = []
         for t in chain.init_utxos[x]:
             me.wallet.utxos[x].append(t)
-    print("SIZE1 ", len(addresses))
+    print("SIZE1 ", len(transaction2.addresses))
     me.get_initial_blockchain(chain)
     return "0"
 
@@ -166,7 +165,7 @@ def register():
         me.chain = chain.copy()
         me.chain.init_utxos = me.wallet.utxos.copy()
         for x in me.ring:
-            addresses[x] = str(me.ring[x][0])
+            transaction2.addresses[x] = str(me.ring[x][0])
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, me.chain)))
         for x in me.ring:
@@ -174,7 +173,7 @@ def register():
             t = me.create_transaction(me.ring[x][0], 100)
             for y in me.ring:
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
-        print("SIZE2", len(addresses))
+        print("SIZE2", len(transaction2.addresses))
     return "0"
 
 @app.route('/ring/', methods=['GET'])
@@ -283,8 +282,5 @@ if __name__ == '__main__':
     q = []
     cli = threading.Thread(target = cli_function, args=(), daemon=True)
     cli.start()
-
-    addresses = {}
-    addresses[str(b'0')] = "GOD"
-
+    
     app.run(host=ip, port=port)
