@@ -195,9 +195,8 @@ class Node:
 				for x in self.wallet.utxos[receiver]:
 					if x.equal(t_out):
 						self.wallet.utxos[receiver].remove(x)
-			print(type(self.ring))
-			self.ring[sender] += t.amount
-			self.ring[receiver] -= t.amount
+			self.ring[sender][2] += t.amount
+			self.ring[receiver][2] -= t.amount
 			
 		for i in range(len(B.listOfTransactions)):
 			t = B.listOfTransactions[i]
