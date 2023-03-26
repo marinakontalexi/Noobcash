@@ -68,9 +68,6 @@ def cli_function(me):
         time.sleep(15)
         requests.get("http://" + ip  + my_port + "/login/")
         time.sleep(5) 
-    if ip == master_node: 
-        while me.current_id_count < total: continue
-        time.sleep(15)
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     while(me.ring[me.wallet.address][2] < 100): continue
@@ -161,11 +158,13 @@ def register():
             transaction2.addresses[x] = str(me.ring[x][0])
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, me.chain)))
+        time.sleep(10)      # wait until all nodes are initialized
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             t = me.create_transaction(me.ring[x][0], 100)
             for y in me.ring:
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
+            time.sleep(5)
     return "0"
 
 @app.route('/ring/', methods=['GET'])
