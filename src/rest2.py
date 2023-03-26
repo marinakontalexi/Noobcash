@@ -32,36 +32,37 @@ def queue_function(stop_event, die_event):
     print(colored("Buffer is active",color_buffer))
     l = s = time.time()
     while True:
-        if time.time() - s > 5:
-            print(colored("Length of queue " + str(len(q)), color_time))
-            s = time.time()
         if die_event.is_set():
             print(colored("Buffer exits",color_buffer))
             return
+        if time.time() - s > 5:
+            print(colored("Length of queue " + str(len(q)), color_time))
+            s = time.time()
         if len(q) == 0: continue
         if len(me.currentBlock.listOfTransactions) < block.capacity:                
             print(colored("Block is not full", color_buffer))   
-            t = q.pop(0)  
-            if me.receive(t):         
-                me.add_transaction_to_block(t)
-                print(colored("T was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
-            if len(me.currentBlock.listOfTransactions) == block.capacity:                
-                print(colored("Block is full!", color_buffer))
-                print(colored("Mining starts...", color_miner))
-                while not me.mine_block():
-                    if time.time() - l > 10:
-                        print(colored("mining...", color_time))
-                        l = time.time()
-                    if stop_event.is_set(): print(colored("I stop mining", color_miner))
-                    while stop_event.is_set():
-                        if die_event.is_set(): 
-                            print(colored("Buffer exits",color_buffer))
-                            return
-                print(colored("mine ok", color_miner))
-                newblock = me.broadcast_block()
-                for x in me.ring:
-                    if x == me.wallet.address: continue 
-                    requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))  
+            if len(q) != 0: 
+                t = q.pop(0)  
+                if me.receive(t):         
+                    me.add_transaction_to_block(t)
+                    print(colored("T was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
+                if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                    print(colored("Block is full!", color_buffer))
+                    print(colored("Mining starts...", color_miner))
+                    while not me.mine_block():
+                        if time.time() - l > 10:
+                            print(colored("mining...", color_time))
+                            l = time.time()
+                        if stop_event.is_set(): print(colored("I stop mining", color_miner))
+                        while stop_event.is_set():
+                            if die_event.is_set(): 
+                                print(colored("Buffer exits",color_buffer))
+                                return
+                    print(colored("mine ok", color_miner))
+                    newblock = me.broadcast_block()
+                    for x in me.ring:
+                        if x == me.wallet.address: continue 
+                        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))  
 
 def cli_function(me):
     if ip != master_node:   
@@ -181,6 +182,7 @@ def show_current_block():
 
 @app.route('/t', methods=['GET'])
 def make_transaction():
+    print(request.remote_addr == ip) 
     args = request.args
     receiver = int(args.get('to'))
     amount = int(args.get('amount'))
