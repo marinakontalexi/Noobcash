@@ -263,7 +263,7 @@ class Node:
 		url = 'http://' + rest2.ip + rest2.my_port + '/view'
 		response = requests.get(url)
 		re = response.json()
-		print('List of transaction of last block of blockchain')
+		print('List of transactions of last block of blockchain')
 		print(re['listOfTransactions'])
 
 	def sendTransCli(id, amount):
@@ -271,6 +271,6 @@ class Node:
 		# print(url)
 		response = requests.get(url)
 		if(response.status_code == 200):
-			print('Transcation is send!')
+			print('Transcation is sent!')
 		else:
 			print('Transaction was not send please repeat!')
