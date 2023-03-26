@@ -108,10 +108,6 @@ def cli_function():
 @app.route('/', methods=['GET'])
 def get_transactions():
     return "Hello World!"
-#     transactions = blockchain.transactions
-
-#     response = {'transactions': transactions}
-#     return jsonify(response), 200
 
 @app.route('/login/', methods=['GET'])
 def login(): 
@@ -130,13 +126,16 @@ def relogin():
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
     for x in ring:
-        addresses[x] = ring[x][0]
+        addresses[x] = str(ring[x][0])
         me.ring[x] = []
         for i in range(3):
             me.ring[x].append(ring[x][i])
         me.wallet.utxos[x] = []
         for t in chain.init_utxos[x]:
             me.wallet.utxos[x].append(t)
+    for x in addresses:
+        print(1)
+        print(addresses[x])
     me.get_initial_blockchain(chain)
     return "0"
 
@@ -170,7 +169,7 @@ def register():
         me.chain = chain.copy()
         me.chain.init_utxos = me.wallet.utxos.copy()
         for x in me.ring:
-            addresses[x] = me.ring[x][0]
+            addresses[x] = str(me.ring[x][0])
             if me.ring[x][0] == 0: continue
             requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, me.chain)))
         for x in me.ring:
@@ -178,6 +177,9 @@ def register():
             t = me.create_transaction(me.ring[x][0], 100)
             for y in me.ring:
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
+        for x in addresses:
+            print(1)
+            print(addresses[x])
     return "0"
 
 @app.route('/ring/', methods=['GET'])
