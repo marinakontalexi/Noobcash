@@ -210,7 +210,7 @@ class Node:
 			# 		print(y.print_trans())
 		return True
 
-	def choose_chain(self, chain, utxos, ring):
+	def choose_chain(self, chain, curr, utxos, ring):							# undo current block
 		if chain.length >= self.chain.length:
 			self.chain = chain.copy()
 			self.currentBlock = block.Block(chain.lasthash)
@@ -221,6 +221,7 @@ class Node:
 				self.wallet.utxos[x] = []
 				for t in utxos[x]:
 					self.wallet.utxos[x].append(t)
+			self.receive_block(curr)
 		return
 		
 	def balance():
