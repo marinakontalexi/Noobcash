@@ -181,7 +181,8 @@ class Node:
 			print("Error: Block has wrong hash!\n")
 			return False
 		for x in self.wallet.utxos:
-			print(self.wallet.utxos[x].print_trans())
+			for y in self.wallet.utxos[x]:
+				print(y.print_trans())
 		for t in self.currentBlock.listOfTransactions:		# undo my transactions
 			print("undoing ", t.print_trans())
 			sender = str(t.sender_address)
