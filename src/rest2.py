@@ -15,7 +15,7 @@ from termcolor import colored
 master_node = '10.0.0.1'
 master_port = ":5000"
 my_port = ":5000"
-total = 2
+total = 3
 project_path = "../"
 color_cli = "light_magenta"
 color_buffer = "green"
