@@ -63,16 +63,17 @@ def queue_function(stop_event, die_event):
                     if x == me.wallet.address: continue 
                     requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))  
 
-def cli_function():
+def cli_function(me):
     if ip != master_node:   
         time.sleep(15)
-        requests.get("http://" + ip  + my_port + "/login/") 
+        requests.get("http://" + ip  + my_port + "/login/")
+        sleep(5) 
     if ip == master_node: 
         while me.current_id_count < total: continue
         time.sleep(15)
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
-    while(me.wallet.balance() < 100): continue
+    while(me.ring[me.wallet.address][2] < 100): continue
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
@@ -275,7 +276,7 @@ if __name__ == '__main__':
     stop = threading.Event()
     die = threading.Event()
     q = []
-    cli = threading.Thread(target = cli_function, args=(), daemon=True)
+    cli = threading.Thread(target = cli_function, args=(me,), daemon=True)
     cli.start()
     
     app.run(host=ip, port=port)
