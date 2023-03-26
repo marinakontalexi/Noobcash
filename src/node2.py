@@ -183,13 +183,10 @@ class Node:
 		
 		for i in range(len(self.currentBlock.listOfTransactions)-1, -1, -1):		# undo my transactions
 			t = self.currentBlock.listOfTransactions[i]
-			print("undoing ", t.print_trans())
 			sender = str(t.sender_address)
 			receiver = t.receiver_address
 			for t_in in t.transaction_inputs:
-				print("should undo:", t_in.print_trans())
 				for x in self.wallet.utxos[sender]:
-					print("checking", x.print_trans())
 					print(x.equal(t_in))
 					if x.equal(t_in): 
 						setattr(x, 'available', True)
@@ -202,11 +199,6 @@ class Node:
 			self.ring[sender][2] += t.amount
 			self.ring[receiver][2] -= t.amount
 
-		print("UTXOS AFTER UNDO")
-		for x in self.wallet.utxos:
-			for y in self.wallet.utxos[x]:
-				print(y.print_trans())
-
 		for i in range(len(B.listOfTransactions)):
 			t = B.listOfTransactions[i]
 			if not self.validate_transaction(t):		# attention: this function changes self.wallet.utxos
@@ -214,10 +206,10 @@ class Node:
 				self.ring = safering.copy()
 				print("Error: Transaction ", i, " was invalid!\n")
 				return False
-			print("UTXOS AFTER REDO", i)
-			for x in self.wallet.utxos:
-				for y in self.wallet.utxos[x]:
-					print(y.print_trans())
+			# print("UTXOS AFTER REDO", i)
+			# for x in self.wallet.utxos:
+			# 	for y in self.wallet.utxos[x]:
+			# 		print(y.print_trans())
 		return True
 
 	def choose_chain(self, chain, utxos, ring):
