@@ -15,7 +15,7 @@ from termcolor import colored
 master_node = '10.0.0.1'
 master_port = ":5000"
 my_port = ":5000"
-total = 3
+total = 5
 project_path = "../"
 color_cli = "light_magenta"
 color_buffer = "green"
@@ -71,7 +71,7 @@ def cli_function(me):
         time.sleep(5) 
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
-    time.sleep(60)
+    time.sleep(90)          # wait until you start making t from file
     while(me.ring[me.wallet.address][2] < 100): continue
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
@@ -86,7 +86,7 @@ def cli_function(me):
         print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
         log += 1
-        sleep = randint(5, 10)
+        sleep = randint(1, 3)
         time.sleep(sleep)
         s = f.readline()
     print(colored("I posted " + str(log) + " transactions", color_cli))
