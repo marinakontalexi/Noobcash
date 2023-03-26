@@ -21,6 +21,7 @@ color_cli = "light_magenta"
 color_buffer = "green"
 color_miner = "light_blue"
 color_time = "dark_grey"
+start_time = 0
 
 # ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 ip = socket.gethostbyname(socket.gethostname())
@@ -90,7 +91,7 @@ def cli_function(me):
         time.sleep(sleep)
         s = f.readline()
     print(colored("I posted " + str(log) + " transactions", color_cli))
-    print("Time", time.time() - t)
+    requests.post("http://" + ip  + my_port + "/throughput/", data = jsonpickle.encode(t))
     if queue.is_alive(): queue.join()
     # kill queue
 #.......................................................................................
@@ -171,10 +172,10 @@ def register():
 
 @app.route('/ring/', methods=['GET'])
 def show_ring():
-    acc = {-1 : ["address", "balance"]}
+    acc = {}
     for x in me.ring:
         acc[me.ring[x][0]] = [me.ring[x][1], me.ring[x][2]]
-    return jsonpickle.encode(acc)
+    return acc
 
 @app.route('/current/', methods=['GET'])
 def show_current_block():
@@ -265,6 +266,23 @@ def resolve():
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     return "0"
+
+@app.route('/throughput/', methods=['POST'])
+def get_time():
+    start_time = jsonpickle.decode(request.data)
+
+@app.route('/throughput/', methods=['GET'])
+def find_throughput():
+    if start_time == 0: print("Something went wrong")
+    t = time.time()
+    numOfTrans = (len(me.chain.listOfBlocks)-1)*block.capacity - total + 1
+    res = {}
+    res["Valid Transactions"] = numOfTrans
+    res["Total Transactions"] = total*100
+    res["Total Time:"] = t - start_time
+    res["Throughput"] = (t - start_time) / numOfTrans
+    return res
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
