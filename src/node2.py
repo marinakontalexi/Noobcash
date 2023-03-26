@@ -78,9 +78,8 @@ class Node:
 			for t in safeutxos[str(T.sender_address)]:
 				if x.equal(t) and t.available:
 					found = True
-					# self.wallet.utxos[str(T.sender_address)].remove(t)
 					setattr(t, 'available', False)
-					self.safering[x.address][2] -= x.amount		# update ring dict
+					safering[x.address][2] -= x.amount		# update ring dict
 					break
 				elif x.equal(t):
 					found = True
