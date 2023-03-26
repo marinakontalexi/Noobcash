@@ -29,6 +29,6 @@ class Block:
         acc["Previous Hash"] = self.previousHash
         acc["My Hash"] = self.myhash 
         acc["Nonce:"] = str(self.nonce)
-        for i in range(self.listOfTransactions):
+        for i in range(len(self.listOfTransactions)):
             acc["Transaction" + str(i)] = self.listOfTransactions[i].print_trans()
         return acc
