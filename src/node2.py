@@ -192,8 +192,8 @@ class Node:
 					print("checking", x.print_trans())
 					print(x.equal(t_in))
 					if x.equal(t_in): 
-						print(x.print_trans())
 						setattr(x, 'available', True)
+						print(x.print_trans())
 						break
 			for t_out in t.transaction_outputs:
 				for x in self.wallet.utxos[t_out.address]:
