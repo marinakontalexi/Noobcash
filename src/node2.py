@@ -190,9 +190,9 @@ class Node:
 						setattr(x, 'available', True)
 						break
 			for t_out in t.transaction_outputs:
-				for x in self.wallet.utxos[receiver]:
+				for x in self.wallet.utxos[t_out.address]:
 					if x.equal(t_out):
-						self.wallet.utxos[receiver].remove(x)
+						self.wallet.utxos[t_out.address].remove(x)
 			self.ring[sender][2] += t.amount
 			self.ring[receiver][2] -= t.amount
 
