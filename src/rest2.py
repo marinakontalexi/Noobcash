@@ -21,7 +21,6 @@ color_cli = "light_magenta"
 color_buffer = "green"
 color_miner = "light_blue"
 color_time = "dark_grey"
-queue = None
 
 ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
@@ -263,6 +262,7 @@ if __name__ == '__main__':
 
     me = node2.Node(ip + my_port)
 
+    queue = None
     stop = threading.Event()
     die = threading.Event()
     q = []
