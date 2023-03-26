@@ -59,7 +59,7 @@ class Transaction:
         return signer.sign(self.hash())
     
     def print_trans(self):
-        print("SIZE", len(rest2.addresses))
+        print("SIZE3", len(rest2.addresses))
         for x in rest2.addresses:
             print(type(x))
             print(rest2.addresses[str(x)])
