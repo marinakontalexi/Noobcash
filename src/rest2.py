@@ -72,7 +72,7 @@ def cli_function():
         time.sleep(15)
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
-    while(me.balance() < 100): continue
+    while(me.wallet.balance() < 100): continue
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
