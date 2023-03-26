@@ -61,7 +61,8 @@ class Transaction:
     def print_trans(self):
         for x in rest2.addresses:
             print(type(x))
-            print(x)
+            print(rest2.addresses[str(x)])
+            print(x == str(self.sender_address), x == self.receiver_address)
         return "TRANSACTION " + str(rest2.addresses[str(self.sender_address)]) + " -> " + str(rest2.addresses[self.receiver_address]) + ' ' + str(self.amount)
     
     def verify_signature(self):

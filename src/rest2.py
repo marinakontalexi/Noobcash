@@ -133,9 +133,6 @@ def get_genesis():
         me.wallet.utxos[x] = []
         for t in chain.init_utxos[x]:
             me.wallet.utxos[x].append(t)
-    for x in addresses:
-        print(1)
-        print(addresses[x])
     me.get_initial_blockchain(chain)
     return "0"
 
@@ -177,9 +174,6 @@ def register():
             t = me.create_transaction(me.ring[x][0], 100)
             for y in me.ring:
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
-        for x in addresses:
-            print(type(x))
-            print(addresses[str(x)])
     return "0"
 
 @app.route('/ring/', methods=['GET'])
