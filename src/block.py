@@ -1,7 +1,7 @@
 from Crypto.Hash import SHA256
 import jsonpickle
 
-capacity = 4
+capacity = 10
 
 class Block:
     def __init__(self, previousHash):
