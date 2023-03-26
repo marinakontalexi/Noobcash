@@ -84,10 +84,7 @@ def cli_function():
     s = f.readline()
     t = time.time()
     log = 0
-    while s != "":
-        if log == 10:
-            print(colored("I posted " + str(log) + " transactions", color_cli))
-            break
+    while s != "":            
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: 
@@ -99,7 +96,7 @@ def cli_function():
         sleep = randint(10, 15)
         time.sleep(sleep)
         s = f.readline()
-
+    print(colored("I posted " + str(log) + " transactions", color_cli))
     print("Time", time.time() - t)
     # kill queue
 #.......................................................................................
