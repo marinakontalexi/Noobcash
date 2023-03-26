@@ -77,7 +77,8 @@ def cli_function(me):
     s = f.readline()
     t = time.time()
     log = 0
-    while s != "":            
+    while s != "":
+        if log == 40: break            
         [r, amount] = s.split()
         rcv = r[2:]
         if int(rcv) >= total: 
@@ -281,7 +282,7 @@ def find_throughput():
     numOfTrans = (len(me.chain.listOfBlocks)-1)*block.capacity - total + 1
     res = {}
     res["Valid Transactions"] = numOfTrans
-    res["Total Transactions"] = total*100
+    res["Total Transactions"] = total*40
     res["Total Time"] = t - me.start_time
     res["Throughput"] = (t - me.start_time) / numOfTrans
     return res
