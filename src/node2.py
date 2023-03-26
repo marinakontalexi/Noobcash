@@ -10,7 +10,7 @@ import rest2
 class Node:
 
 	def __init__(self, ip):
-		self.NBC=200
+		self.NBC=rest2.total*100
 		self.current_id_count = 0
 		self.wallet = self.create_wallet()
 		self.ring = {self.wallet.address : [0, ip, self.NBC]} # here we store information for every node, as its id, its address (ip:port) its public key and its balance

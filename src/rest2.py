@@ -64,8 +64,10 @@ def queue_function(stop_event, die_event):
                     requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))  
 
 def cli_function():
-    time.sleep(15)
-    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")   
+    if ip != master_node:   
+        time.sleep(15)
+        requests.get("http://" + ip  + my_port + "/login/") 
+    if ip == master_node: time.sleep(20)
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     time.sleep(15)
