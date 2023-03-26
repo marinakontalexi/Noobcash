@@ -181,7 +181,8 @@ class Node:
 			print("Error: Block has wrong hash!\n")
 			return False
 		
-		for t in self.currentBlock.listOfTransactions:		# undo my transactions
+		for i in range(len(self.currentBlock.listOfTransactions)-1, -1, -1):		# undo my transactions
+			t = self.currentBlock.listOfTransactions[i]
 			print("undoing ", t.print_trans())
 			sender = str(t.sender_address)
 			receiver = t.receiver_address
