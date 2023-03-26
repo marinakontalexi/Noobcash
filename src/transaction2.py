@@ -62,7 +62,7 @@ class Transaction:
         return signer.sign(self.hash())
     
     def print_trans(self):
-        return "TRANSACTION " + str(addresses[str(self.sender_address)]) + " -> " + str(addresses[self.receiver_address]) + ' ' + str(self.amount)
+        return str(addresses[str(self.sender_address)]) + " -> " + str(addresses[self.receiver_address]) + ' ' + str(self.amount)
     
     def verify_signature(self):
         pk = RSA.import_key(self.sender_address)

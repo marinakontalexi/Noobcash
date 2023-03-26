@@ -82,7 +82,6 @@ class Node:
 					safering[x.address][2] -= x.amount		# update ring dict
 					break
 				elif x.equal(t):
-					found = True
 					print("Input UTXO is taken. Retry.")
 					return False
 			if not found: 
