@@ -84,19 +84,20 @@ def cli_function():
     t = time.time()
     log = 0
     while s != "":
-        if log == 10:
-            print(colored("I posted " + str(log) + " transactions", color_cli))
-            break
-        [r, amount] = s.split()
-        rcv = r[2:]
-        if int(rcv) >= total: 
-            s = f.readline()
-            continue
-        print(colored("Posting transaction: " + s, color_cli))
-        requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        log += 1
-        time.sleep(20)
-        s = f.readline()
+        # if log == 10:
+        #     print(colored("I posted " + str(log) + " transactions", color_cli))
+        #     break
+        # [r, amount] = s.split()
+        # rcv = r[2:]
+        # if int(rcv) >= total: 
+        #     s = f.readline()
+        #     continue
+        # print(colored("Posting transaction: " + s, color_cli))
+        # requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
+        # log += 1
+        # time.sleep(20)
+        # s = f.readline()
+        if time.time() - t > 600: break
 
     print("Time", time.time() - t)
     # kill queue
