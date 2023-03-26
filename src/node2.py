@@ -168,8 +168,10 @@ class Node:
 			for t in B.listOfTransactions:
 				sender = str(t.sender_address)
 				for t_in in t.transaction_inputs:
+					print("should remove: ", t_in.print_trans())
 					for x in self.wallet.utxos[sender]:
 						if x.equal(t_in): 
+							print("removing: ", x.print_trans())
 							self.wallet.utxos[sender].remove(x)
 							break
 			self.currentBlock = block.Block(B.myhash)
