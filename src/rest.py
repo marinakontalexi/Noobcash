@@ -26,6 +26,7 @@ ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
+addresses = {}
 
 def queue_function(qevent):
     print(colored("Buffer is active",color_buffer))
@@ -127,6 +128,7 @@ def relogin():
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
     for x in ring:
+        addresses[x] = ring[x][0]
         me.ring[x] = []
         me.chain_ring[x] = []
         for i in range(3):

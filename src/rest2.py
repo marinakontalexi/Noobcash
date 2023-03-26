@@ -2,65 +2,103 @@ import requests
 from flask import Flask, request
 import threading
 import block
-import node
+import node2
 import blockchain
-import transaction
+import transaction2
 import netifaces as ni
 import socket
 import jsonpickle
 import time
+from termcolor import colored
 
-master_node = '192.168.1.5'
+master_node = '10.0.0.1'
 master_port = ":5000"
-my_port = ":6000"
+my_port = ":5000"
 total = 2
 project_path = "../"
+color_cli = "light_magenta"
+color_buffer = "green"
+color_miner = "light_blue"
+color_time = "dark_grey"
 
-# ip = ni.ifaddresses("enp0s8")[ni.AF_INET][0]['addr']
-ip = socket.gethostbyname(socket.gethostname())
+ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
+# ip = socket.gethostbyname(socket.gethostname())
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
-p = None
-blc_rcv = threading.Event()
-q = []
-def queue_function():
+addresses = {}
+
+def queue_function(qevent):
+    print(colored("Buffer is active",color_buffer))
+    p = None
+    l = s = time.time()
+    m = time.time()
     while True:
+        if time.time() - s > 5:
+            print(colored("Length of queue " + str(len(q)), color_time))
+            s = time.time()
+        if qevent.is_set():
+            print(colored("Buffer exits",color_buffer))
+            return
         if len(q) == 0: continue
-        if p == None or not p.is_alive():
-            if len(me.currentBlock.listOfTransactions) == block.capacity:
-                p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
-                p.start()
-            if len(me.currentBlock.listOfTransactions) < block.capacity:
-                t = q.pop(0)
-                if me.receive(t): me.add_transaction_to_block(t)
+        if p != None and p.is_alive(): 
+            if time.time() - l > 10:
+                print(colored("p is alive", color_time))
+                l = time.time()
+            continue
+        if p == None or p != None and not p.is_alive():
+            if time.time() - m > 10:
+                print(colored("p is not alive", color_time))
+                m = time.time()
+            if len(me.currentBlock.listOfTransactions) < block.capacity:                
+                print(colored("p is None and block is not full", color_buffer))   
+                t = q.pop(0)  
+                if me.receive(t):         
+                    me.add_transaction_to_block(t)
+                    print(colored("t was added to block. Block size is " + str(len(me.currentBlock.listOfTransactions)), color_buffer))
+                if len(me.currentBlock.listOfTransactions) == block.capacity:                
+                    print(colored("p is None and block is full", color_buffer))
+                    p = threading.Thread(target = mine_function, args=(blc_rcv,), daemon=True)
+                    p.start()  
 
 def mine_function(event):
+    print(colored("mining starts", color_miner))
     while not me.mine_block():
         if event.is_set():
+            print(colored("I stop mining", color_miner))
+            event.clear()
             return
-    print("mine ok")
+    print(colored("mine ok", color_miner))
+    newblock = me.broadcast_block()
     for x in me.ring:
         if x == me.wallet.address: continue 
-        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(me.broadcast_block()))
+        requests.post("http://" + me.ring[x][1] + '/newblock/', data = jsonpickle.encode(newblock))
 
-def cli_function(name):
-    time.sleep(10)   
-    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")
-    time.sleep(10)       
-    queue = threading.Thread(target = queue_function, args=(), daemon=True)
+def cli_function():
+    time.sleep(10)
+    if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")   
+    queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
     queue.start()
-    time.sleep(20)
+    time.sleep(10)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
-    s = s = f.readline()
+    s = f.readline()
     t = time.time()
+    log = 0
     while s != "":
+        if log == 10:
+            print(colored("I posted " + str(log) + " transactions", color_cli))
+            break
         [r, amount] = s.split()
         rcv = r[2:]
-        if int(rcv) >= total: continue
+        if int(rcv) >= total: 
+            s = f.readline()
+            continue
+        print(colored("Posting transaction: " + s, color_cli))
         requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        time.sleep(10)
+        log += 1
+        time.sleep(5)
         s = f.readline()
+
     print("Time", time.time() - t)
     # kill queue
 #.......................................................................................
@@ -91,16 +129,13 @@ def relogin():
 def get_genesis():
     (ring, chain) = jsonpickle.decode(request.data)
     for x in ring:
+        addresses[x] = ring[x][0]
         me.ring[x] = []
-        me.chain_ring[x] = []
         for i in range(3):
             me.ring[x].append(ring[x][i])
-            me.chain_ring[x].append(ring[x][i])
         me.wallet.utxos[x] = []
-        me.wallet.chain_utxos[x] = []
         for t in chain.init_utxos[x]:
             me.wallet.utxos[x].append(t)
-            me.wallet.chain_utxos[x].append(t)
     me.get_initial_blockchain(chain)
     return "0"
 
@@ -114,7 +149,7 @@ def register():
     IP = dict["ip"]
     if pk in me.ring:
         if me.ring[pk][1] == ip:
-            requests.post("http://" + IP + '/genesis/', data = jsonpickle.encode((me.chain_ring.copy(), me.chain)))
+            requests.post("http://" + IP + '/genesis/', data = jsonpickle.encode((me.ring.copy(), me.chain)))
         else:
             print("ERROR: Public key already registered")
             requests.post("http://" + IP + '/login/')
@@ -123,20 +158,19 @@ def register():
     me.register_node_to_ring(pk, IP)
 
     if me.current_id_count == total - 1:
-        init_t = transaction.Transaction(b'0', me.wallet.address, 100*total, b'0', [])
+        init_t = transaction2.Transaction(b'0', me.wallet.address, 100*total, b'0', [])
         init_B = block.Block("1")
         init_B.add_transaction(init_t)
         init_B.myhash = init_B.hash()
         chain.add_block(init_B)
         for x in init_t.transaction_outputs:
             me.wallet.utxos[x.address] = [x]
-            me.wallet.chain_utxos[x.address] = [x]
         me.currentBlock = block.Block(chain.lasthash)
         me.chain = chain.copy()
         me.chain.init_utxos = me.wallet.utxos.copy()
         for x in me.ring:
             if me.ring[x][0] == 0: continue
-            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.chain_ring, me.chain)))
+            requests.post("http://" + me.ring[x][1] + '/genesis/', data = jsonpickle.encode((me.ring, me.chain)))
         for x in me.ring:
             if me.ring[x][0] == 0: continue
             t = me.create_transaction(me.ring[x][0], 100)
@@ -151,12 +185,12 @@ def show_ring():
         acc[me.ring[x][0]] = [me.ring[x][1], me.ring[x][2]]
     return jsonpickle.encode(acc)
 
-@app.route('/chain_ring/', methods=['GET'])
-def show_chain_ring():
-    acc = {-1 : ["address", "balance"]}
-    for x in me.chain_ring:
-        acc[me.chain_ring[x][0]] = [me.chain_ring[x][1], me.chain_ring[x][2]]
-    return jsonpickle.encode(acc)
+# @app.route('/chain_ring/', methods=['GET'])
+# def show_chain_ring():
+#     acc = {-1 : ["address", "balance"]}
+#     for x in me.chain_ring:
+#         acc[me.chain_ring[x][0]] = [me.chain_ring[x][1], me.chain_ring[x][2]]
+#     return jsonpickle.encode(acc)
 
 @app.route('/t', methods=['GET'])
 def make_transaction():
@@ -164,18 +198,25 @@ def make_transaction():
     receiver = int(args.get('to'))
     amount = int(args.get('amount'))
     t = me.create_transaction(receiver, amount)
+    if t == None: return "1"
     for x in me.ring:
-        if x == me.wallet.address: continue
         requests.post("http://" + me.ring[x][1] + '/broadcast/', data = jsonpickle.encode(t))
-    requests.post("http://" + me.ring[me.wallet.address][1] + '/broadcast/', data = jsonpickle.encode(t))
     return "0"
 
 @app.route('/broadcast/', methods=['POST'])
 def get_transaction():
-    print("TRANSACTION RECEIVED\n")
+    print("TRANSACTION RECEIVED")
     d = request.data
-    t = jsonpickle.decode(d) 
+    t = jsonpickle.decode(d)
+    # print("Inputs:")
+    # for x in t.transaction_inputs: 
+    #     x.print_trans()
+    # print("UTXOS")
+    # for x in me.wallet.utxos:
+    #     for y in me.wallet.utxos[x]:
+    #         y.print_trans()
     q.append(t)
+    print("I pushed a transaction")
     return "0"
             
 
@@ -197,7 +238,8 @@ def print_utxos():
 
 @app.route('/newblock/', methods=['POST'])
 def get_block():
-    print("BLOCK RECEIVED\n")
+    print("BLOCK RECEIVED")
+    qevent.set()
     blc_rcv.set()
     d = request.data
     b = jsonpickle.decode(d)  
@@ -206,14 +248,16 @@ def get_block():
             if x == me.wallet.address: continue
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
-        blc_rcv.clear()
+        qevent.clear()
+        queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
+        queue.start()
     return "0"
 
 @app.route('/send_chain/', methods=['POST'])
 def send_chain():
     IP = request.data
     requests.post("http://" + IP.decode() + '/resolve/', 
-                    data = jsonpickle.encode((me.chain, me.wallet.chain_utxos, me.chain_ring)))
+                    data = jsonpickle.encode((me.chain, me.wallet.utxos, me.ring)))
     return "0"
 
 @app.route('/resolve/', methods=['POST'])
@@ -221,20 +265,25 @@ def resolve():
     d = request.data
     (c, u, r) = jsonpickle.decode(d)
     me.choose_chain(c, u, r)
-    blc_rcv.clear()
+    qevent.clear()
+    queue = threading.Thread(target = queue_function, args=(qevent,), daemon=True)
+    queue.start()
     return "0"
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=6000, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 
-    me = node.Node(ip + my_port)
+    me = node2.Node(ip + my_port)
 
-    cli = threading.Thread(target = cli_function, args=(1,), daemon=True)
+    blc_rcv = threading.Event()
+    qevent = threading.Event()
+    q = []
+    cli = threading.Thread(target = cli_function, args=(), daemon=True)
     cli.start()
 
     app.run(host=ip, port=port)
