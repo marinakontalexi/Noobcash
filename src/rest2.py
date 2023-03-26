@@ -21,6 +21,7 @@ color_cli = "light_magenta"
 color_buffer = "green"
 color_miner = "light_blue"
 color_time = "dark_grey"
+queue = None
 
 ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
 # ip = socket.gethostbyname(socket.gethostname())
@@ -225,7 +226,7 @@ def get_block():
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
         die.set()
-        if not queue.is_alive(): die.clear()
+        if queue == None or not queue.is_alive(): die.clear()
         stop.clear() 
         queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
         queue.start()
@@ -246,7 +247,7 @@ def resolve():
         stop.clear()
         return "1"
     die.set()
-    if not queue.is_alive(): die.clear()
+    if queue == None or not queue.is_alive(): die.clear()
     stop.clear()
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
