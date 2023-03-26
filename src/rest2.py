@@ -289,6 +289,7 @@ def find_throughput():
 
 @app.route('/avg/', methods=['GET'])
 def show_average():
+    me.avg.pop(0)       # first blocks take much longer due to synchronization
     return {"Average Block Time" : average(me.avg)}
 
 if __name__ == '__main__':
