@@ -105,7 +105,7 @@ class Node:
 				print("Error: Wrong Transaction Outputs!\n")
 				return False
 		
-		for x in T.transaction_outputs:
+		for x in correct_outputs:
 			safeutxos[x.address].append(x)
 			safering[x.address][2] += x.amount
 		self.wallet.utxos = safeutxos.copy()
