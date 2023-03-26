@@ -213,15 +213,31 @@ class Node:
 	def choose_chain(self, chain, curr, utxos, ring):							# undo current block
 		if chain.length >= self.chain.length:
 			self.chain = chain.copy()
-			self.currentBlock = block.Block(chain.lasthash)
+			self.currentBlock = curr
 			for x in ring:
 				self.ring[x] = []
 				for i in range(3):
 					self.ring[x].append(ring[x][i])
 				self.wallet.utxos[x] = []
 				for t in utxos[x]:
-					self.wallet.utxos[x].append(t)
-			self.receive_block(curr)
+					self.wallet.utxos[x].append(t.copy())
+					
+			for i in range(len(self.currentBlock.listOfTransactions)-1, -1, -1):		# undo my transactions
+				t = self.currentBlock.listOfTransactions[i]
+				sender = str(t.sender_address)
+				receiver = t.receiver_address
+				for t_in in t.transaction_inputs:
+					for x in self.wallet.utxos[sender]:
+						if x.equal(t_in): 
+							setattr(x, 'available', True)
+							break
+				for t_out in t.transaction_outputs:
+					for x in self.wallet.utxos[t_out.address]:
+						if x.equal(t_out):
+							self.wallet.utxos[t_out.address].remove(x)
+			self.ring[sender][2] += t.amount
+			self.ring[receiver][2] -= t.amount
+			self.currentBlock = block.Block(chain.lasthash)
 		return
 		
 	def balance():
