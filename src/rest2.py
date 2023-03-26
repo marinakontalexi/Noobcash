@@ -179,7 +179,7 @@ def register():
                 requests.post("http://" + me.ring[y][1] + '/broadcast/', data = jsonpickle.encode(t))
         for x in addresses:
             print(type(x))
-            print(x)
+            print(addresses[str(x)])
     return "0"
 
 @app.route('/ring/', methods=['GET'])
