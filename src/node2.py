@@ -196,9 +196,6 @@ class Node:
 			self.ring[sender][2] += t.amount
 			self.ring[receiver][2] -= t.amount
 
-		print("CHECK UTXOS AFTER UNDO")
-		time.sleep(60)
-		
 		for i in range(len(B.listOfTransactions)):
 			t = B.listOfTransactions[i]
 			if not self.validate_transaction(t):		# attention: this function changes self.wallet.utxos
@@ -206,8 +203,7 @@ class Node:
 				self.ring = safering.copy()
 				print("Error: Transaction ", i, " was invalid!\n")
 				return False
-		print("CHECK UTXOS AFTER REDO")
-		time.sleep(60)
+			
 		return True
 
 	def choose_chain(self, chain, utxos, ring):
