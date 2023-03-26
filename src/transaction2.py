@@ -27,6 +27,11 @@ class TransactionIO:
         #calculate self.hash
         block_to_byte = bytes(str(self.transaction_id) + str(self.address) + str(self.amount), 'utf-8')
         return SHA256.new(block_to_byte)
+    
+    def copy(self):
+        b = TransactionIO(self.transaction_id, self.address, self.amount)
+        setattr(b, 'available', self.available)
+        return b
         
 
 class Transaction:

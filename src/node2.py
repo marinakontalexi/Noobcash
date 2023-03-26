@@ -212,10 +212,10 @@ class Node:
 			# 		print(y.print_trans())
 		return True
 
-	def choose_chain(self, chain, curr, utxos, ring):							# undo current block
+	def choose_chain(self, chain, curr, utxos, ring):
 		if chain.length > self.chain.length:
 			self.chain = chain.copy()
-			self.currentBlock = curr
+			self.currentBlock = curr.copy()
 			for x in ring:
 				self.ring[x] = []
 				for i in range(3):
@@ -237,8 +237,8 @@ class Node:
 					for x in self.wallet.utxos[t_out.address]:
 						if x.equal(t_out):
 							self.wallet.utxos[t_out.address].remove(x)
-			self.ring[sender][2] += t.amount
-			self.ring[receiver][2] -= t.amount
+				self.ring[sender][2] += t.amount
+				self.ring[receiver][2] -= t.amount
 			self.currentBlock = block.Block(chain.lasthash)
 			return False
 		return True

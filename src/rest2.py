@@ -22,8 +22,8 @@ color_buffer = "green"
 color_miner = "light_blue"
 color_time = "dark_grey"
 
-ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
-# ip = socket.gethostbyname(socket.gethostname())
+# ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
+ip = socket.gethostbyname(socket.gethostname())
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
@@ -259,8 +259,11 @@ if __name__ == '__main__':
 
     parser = ArgumentParser()
     parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    parser.add_argument("-ip", default=ip, help="IP of the host")
     args = parser.parse_args()
+    ip = args.ip
     port = args.port
+    my_port = ":" + str(port)
 
     me = node2.Node(ip + my_port)
 
