@@ -131,7 +131,7 @@ class Node:
 			return
 		self.chain = chain.copy()
 		self.currentBlock = block.Block(chain.lasthash)
-		t = time.time()
+		self.t = time.time()
 		return
 	
 	def validate_chain(self, chain):
@@ -156,8 +156,8 @@ class Node:
 		if len(res.listOfTransactions) == 0: return res
 		self.chain.add_block(self.currentBlock)
 
-		self.avg.append(time.time() - t)
-		t = time.time()
+		self.avg.append(time.time() - self.t)
+		self.t = time.time()
 
 		for t in res.listOfTransactions:
 			sender = str(t.sender_address)
@@ -249,8 +249,8 @@ class Node:
 				self.ring[sender][2] += t.amount
 				self.ring[receiver][2] -= t.amount
 			self.currentBlock = block.Block(chain.lasthash)
-			self.avg.append(time.time() - t)
-			t = time.time()
+			self.avg.append(time.time() - self.t)
+			self.t = time.time()
 			return False
 		return True
 		
