@@ -68,7 +68,7 @@ def cli_function():
     if ip != master_node: requests.get("http://" + ip  + my_port + "/login/")   
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
-    time.sleep(5)
+    time.sleep(15)
     f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
     s = f.readline()
     t = time.time()
