@@ -225,7 +225,8 @@ def get_block():
             requests.post("http://" + me.ring[x][1] + '/send_chain/', data = ip + my_port)
     else:
         die.set()
-        if queue == None or not queue.is_alive(): die.clear()
+        time.sleep(3) 
+        die.clear()
         stop.clear() 
         queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
         queue.start()
@@ -246,7 +247,8 @@ def resolve():
         stop.clear()
         return "1"
     die.set()
-    if queue == None or not queue.is_alive(): die.clear()
+    time.sleep(3)
+    die.clear()
     stop.clear()
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
