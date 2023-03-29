@@ -14,27 +14,27 @@ from termcolor import colored
 from numpy import average
 
 master_node = '10.0.0.1'
-master_port = ":5000"
-my_port = ":5000"
+master_port = ":6000"
+my_port = ":6000"
 total = 5
 project_path = "../"
-color_cli = "light_magenta"
-color_buffer = "green"
+color_cli = "green"
+color_buffer = "yellow"
 color_miner = "light_blue"
 color_time = "dark_grey"
 
-# ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
-ip = socket.gethostbyname(socket.gethostname())
+ip = ni.ifaddresses("eth1")[ni.AF_INET][0]['addr']
+# ip = socket.gethostbyname(socket.gethostname())
 
 app = Flask(__name__)
 chain = blockchain.Blockchain()
 
 def queue_function(stop_event, die_event):
-    print(colored("Buffer is active",color_buffer))
+    # print(colored("Buffer is active",color_buffer))
     l = s = time.time()
     while True:
         if die_event.is_set():
-            print(colored("Buffer exits",color_buffer))
+            # print(colored("Buffer exits",color_buffer))
             return
         if time.time() - s > 5:
             print(colored("Length of queue " + str(len(q)), color_time))
@@ -59,7 +59,7 @@ def queue_function(stop_event, die_event):
                             if die_event.is_set(): 
                                 print(colored("Buffer exits",color_buffer))
                                 return
-                    print(colored("mine ok", color_miner))
+                    print(colored("Mining succeeded", color_miner))
                     newblock = me.broadcast_block()
                     for x in me.ring:
                         if x == me.wallet.address: continue 
@@ -67,33 +67,35 @@ def queue_function(stop_event, die_event):
 
 def cli_function(me):
     if ip != master_node:   
-        time.sleep(15)
+        time.sleep(10)      # wait untill master_node is up
         requests.get("http://" + ip  + my_port + "/login/")
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     time.sleep(100)          # wait until you start making t from file
     while(me.ring[me.wallet.address][2] < 100): continue
-    f = open(project_path + "5nodes/transactions{}.txt".format(me.ring[me.wallet.address][0]), "r")
-    s = f.readline()
-    t = time.time()
-    log = 0
-    while s != "":
-        if log == 20: break            
-        [r, amount] = s.split()
-        rcv = r[2:]
-        if int(rcv) >= total: 
-            s = f.readline()
-            continue
-        print(colored("Posting transaction: " + s, color_cli))
-        requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
-        log += 1
-        sleep = randint(2, 5)
-        time.sleep(sleep)
+    if (args.auto):
+        id = (args.n // 5 + 1)  * me.ring[me.wallet.address][0] + (args.p//1000)%2
+        f = open(project_path + "5nodes/transactions{}.txt".format(id), "r")
         s = f.readline()
-    print(colored("I posted " + str(log) + " transactions", color_cli))
-    requests.post("http://" + ip  + my_port + "/throughput/", data = jsonpickle.encode(t))
+        t = time.time()
+        log = 0
+        while s != "":
+            if log == 20: break            
+            [r, amount] = s.split()
+            rcv = r[2:]
+            if int(rcv) >= total: 
+                s = f.readline()
+                continue
+            print(colored("Posting transaction: " + s, color_cli))
+            requests.get("http://" + ip  + my_port + "/t?to=" + rcv + '&amount=' + amount)
+            log += 1
+            sleep = randint(sleep, sleep+5)
+            time.sleep(sleep)
+            s = f.readline()
+        print(colored("I posted " + str(log) + " transactions", color_cli))
+        requests.post("http://" + ip  + my_port + "/throughput/", data = jsonpickle.encode(t))
     if queue.is_alive(): queue.join()
-    # kill queue
+    
 #.......................................................................................
 
 
@@ -284,7 +286,7 @@ def find_throughput():
     res["Valid Transactions"] = numOfTrans
     res["Total Transactions"] = total*20
     res["Total Time"] = t - me.start_time
-    res["Throughput"] = (t - me.start_time) / numOfTrans
+    res["Throughput"] = numOfTrans / (t - me.start_time)
     return res
 
 @app.route('/avg/', methods=['GET'])
@@ -296,13 +298,23 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    parser.add_argument('-p', default=6000, type=int, help='port to listen on')
     parser.add_argument("-ip", default=ip, help="IP of the host")
+    parser.add_argument("-diff", default=3, help="Mining difficulty")
+    parser.add_argument("-cap", default=3, help="Block capacity")
+    parser.add_argument("-n", default=5, help="Number of nodes")
+    parser.add_argument("-w", default=1, help="Wait time")
+    parser.add_argument("--auto", default=False, action="store_true", help="Automating transaction making")
+
     args = parser.parse_args()
     ip = args.ip
-    port = args.port
-    my_port = ":" + str(port)
+    port = args.p
+    blockchain.MINING_DIFFICULTY = args.diff
+    block.capacity = args.cap
+    total = args.n
+    sleep = args.w
 
+    my_port = ":" + str(port)
     me = node2.Node(ip + my_port)
     
     queue = None
@@ -313,3 +325,4 @@ if __name__ == '__main__':
     cli.start()
     
     app.run(host=ip, port=port)
+    cli.join()

@@ -17,7 +17,7 @@ class Node:
 		self.ring = {self.wallet.address : [0, ip, self.NBC]} # here we store information for every node, as its id, its address (ip:port) its public key and its balance
 		self.currentBlock = None
 		self.chain = None
-		self.start_time = 0
+		self.start_time = time.time()
 		self.avg = []
 		self.t = time.time()
 		
