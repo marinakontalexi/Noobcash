@@ -305,9 +305,9 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-p', default=5000, type=int, help='port to listen on')
     parser.add_argument("-ip", default=ip, help="IP of the host")
-    parser.add_argument("-diff", default=3, help="Mining difficulty")
-    parser.add_argument("-cap", default=3, help="Block capacity")
-    parser.add_argument("-n", default=5, help="Number of nodes")
+    parser.add_argument("-diff", default=3, type=int, help="Mining difficulty")
+    parser.add_argument("-cap", default=3, type=int, help="Block capacity")
+    parser.add_argument("-n", default=5, type=int, help="Number of nodes")
     parser.add_argument("-w", default=1, help="Wait time")
     parser.add_argument("--auto", default=False, action="store_true", help="Automatic transaction making")
 
