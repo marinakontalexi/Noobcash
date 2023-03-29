@@ -14,7 +14,7 @@ from termcolor import colored
 from numpy import average
 
 master_node = '10.0.0.1'
-master_port = ":6000"
+master_port = ":5000"
 my_port = ":6000"
 total = 5
 project_path = "../"
