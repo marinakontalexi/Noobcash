@@ -263,6 +263,7 @@ class Node:
 		url = 'http://' + rest2.ip + rest2.my_port + '/view/'
 		response = requests.get(url)
 		re = response.json()
+		re = re.replace(',', ',\n')
 		print('Last block added to blockchain')
 		print(re)
 
@@ -273,4 +274,4 @@ class Node:
 		if(response.status_code == 200):
 			print('Transcation is sent!')
 		else:
-			print('Transaction was not send please repeat!')
+			print('Transaction was not sent please repeat!')
