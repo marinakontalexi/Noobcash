@@ -74,7 +74,7 @@ def cli_function(me):
     time.sleep(100)          # wait until you start making t from file
     while(me.ring[me.wallet.address][2] < 100): continue
     if (args.auto):
-        id = (args.n // 5 + 1)  * me.ring[me.wallet.address][0] + (args.p//1000)%2
+        id = (args.n // 5 + 1)  * me.ring[me.wallet.address][0] + (args.p)%2
         f = open(project_path + "5nodes/transactions{}.txt".format(id), "r")
         s = f.readline()
         t = time.time()
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', default=6000, type=int, help='port to listen on')
+    parser.add_argument('-p', default=5000, type=int, help='port to listen on')
     parser.add_argument("-ip", default=ip, help="IP of the host")
     parser.add_argument("-diff", default=3, help="Mining difficulty")
     parser.add_argument("-cap", default=3, help="Block capacity")

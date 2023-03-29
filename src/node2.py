@@ -60,19 +60,19 @@ class Node:
 		
 	def receive(self, T):
 		if self.validate_transaction(T):
-			print("Transaction is valid\n")
+			print("Transaction is valid")
 			return True
-		print(colored("Error: Transaction not valid. " + str(self.wallet.address == str(T.sender_address)), "red"))	
+		print(colored("Error: Transaction " + T.print_trans() + " is not valid.", "red"))	
 		return False
 
 	def validate_transaction(self, T):
 		safeutxos = self.wallet.utxos.copy()
 		safering = self.ring.copy()
 		if not T.verify_signature(): 
-			print("Error: Wrong signature!\n")
+			print("Error: Wrong signature!")
 			return False
 		if T.receiver_address not in self.ring:
-			print("Error: Wrong receiver address!\n")
+			print("Error: Wrong receiver address!")
 			return False
 		
 		for x in T.transaction_inputs:			# check for valid transaction inputs
@@ -101,11 +101,11 @@ class Node:
 			return False
 
 		if (len(T.transaction_outputs) != len(correct_outputs)):
-			print("Error: Invalid Transaction Outputs!\n")
+			print("Error: Invalid Transaction Outputs!")
 			return False
 		for i in range(len(correct_outputs)):
 			if not T.transaction_outputs[i].equal(correct_outputs[i]):     # check for valid transaction outputs
-				print("Error: Wrong Transaction Outputs!\n")
+				print("Error: Wrong Transaction Outputs!")
 				return False
 		
 		for x in correct_outputs:
@@ -185,10 +185,10 @@ class Node:
 		safeutxos = self.wallet.utxos.copy()
 		safering = self.ring.copy()
 		if self.chain.lasthash != B.previousHash:
-			print("Error: Block has wrong previous hash!\n")
+			print("Error: Block has wrong previous hash!")
 			return False
 		if B.myhash != B.hash():
-			print("Error: Block has wrong hash!\n")
+			print("Error: Block has wrong hash!")
 			return False
 		
 		for i in range(len(self.currentBlock.listOfTransactions)-1, -1, -1):		# undo my transactions
@@ -212,7 +212,7 @@ class Node:
 			if not self.validate_transaction(t):		# attention: this function changes self.wallet.utxos
 				self.wallet.utxos = safeutxos.copy()
 				self.ring = safering.copy()
-				print("Error: Transaction ", i, " was invalid!\n")
+				print("Error: Transaction ", i, " was invalid!")
 				return False
 			# print("UTXOS AFTER REDO", i)
 			# for x in self.wallet.utxos:
@@ -263,8 +263,8 @@ class Node:
 		url = 'http://' + rest2.ip + rest2.my_port + '/view/'
 		response = requests.get(url)
 		re = response.json()
-		print('List of transactions of last block of blockchain')
-		print(re['listOfTransactions'])
+		print('Last block added to blockchain')
+		print(re)
 
 	def sendTransCli(id, amount):
 		url = 'http://' + rest2.ip + rest2.my_port + '/t?to='+ str(id) + '&amount=' + str(amount)
