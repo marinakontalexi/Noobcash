@@ -217,6 +217,11 @@ def get_transaction():
 def get_balance():
     return str(me.wallet.balance())
 
+@app.route('/view/', methods=['GET'])
+def get_view():
+    s = len(me.chain.listOfBlocks)
+    return me.chain.listOfBlocks[s-1].print()
+
 @app.route('/blockchain/', methods=['GET'])
 def print_blockchain():
     return me.chain.print()
@@ -304,7 +309,7 @@ if __name__ == '__main__':
     parser.add_argument("-cap", default=3, help="Block capacity")
     parser.add_argument("-n", default=5, help="Number of nodes")
     parser.add_argument("-w", default=1, help="Wait time")
-    parser.add_argument("--auto", default=False, action="store_true", help="Automating transaction making")
+    parser.add_argument("--auto", default=False, action="store_true", help="Automatic transaction making")
 
     args = parser.parse_args()
     ip = args.ip

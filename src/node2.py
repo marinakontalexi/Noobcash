@@ -260,7 +260,7 @@ class Node:
 		return response
 	
 	def view():
-		url = 'http://' + rest2.ip + rest2.my_port + '/view'
+		url = 'http://' + rest2.ip + rest2.my_port + '/view/'
 		response = requests.get(url)
 		re = response.json()
 		print('List of transactions of last block of blockchain')
