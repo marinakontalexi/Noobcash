@@ -69,6 +69,7 @@ def cli_function(me):
     if ip != master_node:   
         time.sleep(10)      # wait untill master_node is up
         requests.get("http://" + ip  + my_port + "/login/")
+    time.sleep(10)      # wait untill initialization is done
     queue = threading.Thread(target = queue_function, args=(stop, die,), daemon=True)
     queue.start()
     time.sleep(100)          # wait until you start making t from file
