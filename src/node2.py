@@ -7,6 +7,7 @@ import requests
 from termcolor import colored
 import rest2
 import time
+import json
 
 class Node:
 
@@ -263,9 +264,9 @@ class Node:
 		url = 'http://' + rest2.ip + rest2.my_port + '/view/'
 		response = requests.get(url)
 		re = response.json()
-		re = re.replace(',', ',\n')
+		r = json.dumps(re).replace(',', ',\n')
 		print('Last block added to blockchain')
-		print(re)
+		print(r)
 
 	def sendTransCli(id, amount):
 		url = 'http://' + rest2.ip + rest2.my_port + '/t?to='+ str(id) + '&amount=' + str(amount)
